@@ -1,0 +1,12 @@
+{
+  "name": "odas-web",
+  "version": "0.2.0",
+  "description": "Web interface for ODAS platform",
+  "repository": "MARS on GitHub/introlab",
+  "license" : "MIT",
+  "dependencies": {
+    "express": "^4.15.2",
+    "express-ws": "^3.0.0",
+    "systeminformation": "^3.17.3"
+  }
+}

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <title>Live Data</title>
+        <link rel="icon" href="images/introlab_icon.png">
+        
+        <link href="css/bootstrap.css" rel="stylesheet">
+        <link href="css/style.css" rel="stylesheet">
+        <link href="css/bootstrap_slider.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="wrapper">
+            <nav class="navbar navbar-default bg-primary navbar-fixed-top ">
+                <div class="container-fluid"> 
+
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-content" aria-expanded="false">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <button type="button" class="navbar-toggle collapsed navbar-button" data-toggle="collapse" data-target="#source-list" aria-expanded="false">
+                            Sources
+                        </button>
+                        <a class="navbar-brand navbar-logo" width="120" href="https://github.com/introlab/odas"><img src="images/introlab_icon.png"></a>
+                        <a class="navbar-brand" width="120" href="https://github.com/introlab/odas"><span>ODAS</span></a>
+                    </div>
+
+                <div class="collapse navbar-collapse" id="navbar-content">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href='/'>Live Data</a></li>
+                        <li><a href="/config">Configure</a></li>
+                    </ul>
+                </div>
+
+                </div>
+            </nav>
+
+            <div class="container-fluid content main">
+                <div class="row content">
+                    <div class="col-md-3 col-lg-2 layout darker">
+                        <h2>ODAS Data</h2>
+                        <div class="well" id="system-monitor">
+                            <form>
+                                <div class="form-group">
+                                    <h4>System Monitor</h4>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">CPU Usage</span><span class="form-control">{{system.cpu}}</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">CPU Temp.</span><span class="form-control">{{system.temp}}</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">Memory Usage</span><span class="form-control">{{system.mem}}</span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-md-7 col-lg-8 layout">
+                        <div class="row graph-row">
+                            <div class="col-xs-12 content">
+                                <h4 class="abs_head">Source Elevation</h4>
+                                <canvas class="graph"></canvas>
+                            </div>
+                        </div>
+                        <div class="row graph-row">
+                            <div class="col-xs-12 content">
+                                <h4 class="abs_head">Source Azimut</h4>
+                                <canvas class="graph"></canvas>
+                            </div>
+                        </div>
+                        <div class="row sphere-row">
+                            <div class="col-xs-12 content">
+                                <h4 id="sphere_heading">Active sources locations</h4>
+                                <canvas id="sphere"></canvas>
+                                <canvas id="axis" onclick="viewFront()"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 layout darker">
+                        <div class="collapse navbar-collapse" id="source-list">
+                            
+                            <h2>Sources</h2>
+                            <table class="table table-hover" id="source_table">
+                                <tr v-for = "source in sources">
+                                    <td>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" v-model="source.selected" v-on:change="showHide">Source  <span v-if = "source.active" class="badge" v-bind:style = "{ 'background-color' : source.rgbValueString }" >{{source.id}}</span></label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <h2>Filters</h2>
+                            <table class="table table-hover" id="filter_table">
+                                <tr>
+                                    <td>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" v-model="showSources" v-on:change="showSrc">Sources</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="checkbox">
+                                            <label><input type="checkbox" v-model="showPotentials" v-on:change="showPot">Potentials</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            <p>Potential sources energy range:</p>
+                            <b id="left-marker">0</b>
+                            <input id="range_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="1" data-slider-step="0.05" data-slider-value="[0,1]"/>
+                            <b id="right-marker">1</b> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <p class="col-xs-10 text-muted">ODAS platform web interface</p>
+                        <a href="/legal" class="col-xs-2 text-right">Legal</a>
+                    </div>
+                </div>
+            </footer>
+        </div>
+
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        
+        <script src="js/vue.js"></script>
+        <script src="js/bootstrap_slider.js"></script>
+        <script src="js/interface.js"></script>
+        
+        
+        <script src="js/tcp_link.js"></script>
+        
+        <script src="js/three.min.js"></script>
+        <script src="js/stats.min.js"></script>
+        <script src="js/TrackballControls.js"></script>
+        
+        <script src="js/Chart.bundle.min.js"></script>
+        <script src="js/graph.js"></script>
+        
+        <script src="js/source_sphere.js"></script>
+        
+        <script src="js/audio_stream.js"></script>
+    </body>
+</html>

@@ -213,6 +213,13 @@ document.addEventListener('tracking', function(e) {
         framCnt = 0;
         
 		dataMax = currentFrame.timestamp;
+        
+        if(currentFrame.ptimestamp) {
+            if(currentFrame.ptimestamp > currentFrame.timestamp) {
+                dataMax = currentFrame.ptimestamp;
+            }
+        }
+        
         charts.forEach(function(bundle) {
 			
             bundle.chart.config.options.scales.xAxes[0].ticks.max = dataMax;
@@ -290,7 +297,14 @@ document.addEventListener('potential', function(e) {
         
         document.dispatchEvent(new Event('request-chart'));
         
-		dataMax = currentFrame.timestamp;
+		dataMax = currentFrame.ptimestamp;
+        
+        if(currentFrame.timestamp) {
+            if(currentFrame.timestamp > currentFrame.ptimestamp) {
+                dataMax = currentFrame.timestamp;
+            }
+        }
+        
         charts.forEach(function(bundle) {
 
             bundle.chart.config.options.scales.xAxes[0].ticks.max = dataMax;

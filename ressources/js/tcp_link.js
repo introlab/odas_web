@@ -42,10 +42,12 @@ socket.onmessage = function(msg) {
         return;
     }
     
-    if(Math.abs(data.frame.timestamp -  currentFrame.timestamp) > 1)
-        console.warn('Frame skipped ' + data.frame.timestamp.toString());
+    console.log(data);
+    
+    if(Math.abs(data.timeStamp -  currentFrame.timestamp) > 1)
+        console.warn('Frame skipped ' + data.timeStamp.toString());
 
-    currentFrame.timestamp = data.frame.timestamp;
+    currentFrame.timestamp = data.timeStamp;
 
     var newMap = {};
     var indexPool = [];
@@ -54,9 +56,13 @@ socket.onmessage = function(msg) {
     });
     var hasNewSource = false;
     
-    if(data.frame.src) {    // If frame contains sources
-        
-        data.frame.src.forEach(function(src) {  // Remove still used index from the pool
+    data.src = data.src.filter(function(s) {
+        return s.id !== 0;
+    });
+    
+    if(data.src) {    // If frame contains sources
+
+        data.src.forEach(function(src) {  // Remove still used index from the pool
             
             if(typeof(indexMap[src.id])!='undefined') {  // If source is not new
                 indexPool.splice(indexPool.indexOf(indexMap[src.id]),1);
@@ -64,7 +70,7 @@ socket.onmessage = function(msg) {
             }
         });
         
-        data.frame.src.forEach(function(src) { // Update sources
+        data.src.forEach(function(src) { // Update sources
 
              if(typeof(indexMap[src.id])!='undefined') {  // Source is already registered
 
@@ -135,19 +141,19 @@ potentialSocket.onmessage = function(msg) {
         return;
     }
     
-    if(Math.abs(data.frame.timestamp -  currentFrame.ptimestamp) > 1)
-        console.warn('Frame skipped ' + data.frame.timestamp.toString());
+    if(Math.abs(data.timeStamp -  currentFrame.ptimestamp) > 1)
+        console.warn('Frame skipped ' + data.timeStamp.toString());
 
-    currentFrame.ptimestamp = data.frame.timestamp;
+    currentFrame.ptimestamp = data.timeStamp;
     currentFrame.potentialSources = [];
     
-    if(data.frame.src) {    // If frame contains sources
+    if(data.src) {    // If frame contains sources
         
-        data.frame.src.forEach(function(source) {
+        data.src.forEach(function(source) {
             
             var newSource = new PotentialSource();
             
-            newSource.e = source.e;
+            newSource.e = source.E;
             newSource.x = source.x;
             newSource.y = source.y;
             newSource.z = source.z;

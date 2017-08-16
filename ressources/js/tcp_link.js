@@ -42,8 +42,6 @@ socket.onmessage = function(msg) {
         return;
     }
     
-    console.log(data);
-    
     if(Math.abs(data.timeStamp -  currentFrame.timestamp) > 1)
         console.warn('Frame skipped ' + data.timeStamp.toString());
 

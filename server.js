@@ -174,15 +174,10 @@ function handleConnection(conn) {
     var decoder = new StringDecoder();
     
     // Decode received string
-    var splitted = decoder.write(d).split('$');
-      
-    // Split frame
-    splitted.forEach(function(str) {
-        
-        if(str.length > 0)  {   // Clear empty strings
-            eventEmitter.emit('newTracking',str);
-        }
-    });
+    var str = decoder.write(d);
+            
+    eventEmitter.emit('newTracking',str);
+
   }
 
   function onConnClose() {
@@ -219,15 +214,10 @@ function handlePotConnection(conn) {
     var decoder = new StringDecoder();
     
     // Decode received string
-    var splitted = decoder.write(d).split('$');
-      
-    // Split frame
-    splitted.forEach(function(str) {
-        
-        if(str.length > 0)  {   // Clear empty strings
-            eventEmitter.emit('newPotential',str);
-        }
-    });
+    var str = decoder.write(d);
+            
+    eventEmitter.emit('newPotential',str);
+
   }
 
   function onConnClose() {

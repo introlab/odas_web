@@ -34,23 +34,23 @@ app.get('/legal', function(req, res) {
 
 // Websocket to stream tracking
 app.ws('/tracking',function(ws, req) {
-    
+
     // Sends new data to client
     var sendData = function(data) {
-        
+
         try {
             ws.send(data);
         }
-        
+
         catch(e) {
             console.warn('Socket closed');
         }
     };
-    
+
     // Register client to event
     eventEmitter.on('newTracking',sendData);
     console.log('registered tracking');
-    
+
     // Remove listener when connection closes
     ws.on('close', function() {
         eventEmitter.removeListener('newTracking',sendData);
@@ -60,23 +60,23 @@ app.ws('/tracking',function(ws, req) {
 
 // Websocket to stream potential sources
 app.ws('/potential',function(ws, req) {
-    
+
     // Sends new data to client
     var sendData = function(data) {
-        
+
         try {
             ws.send(data);
         }
-        
+
         catch(e) {
             console.warn('Socket closed');
         }
     };
-    
+
     // Register client to event
     eventEmitter.on('newPotential',sendData);
     console.log('registered potential');
-    
+
     // Remove listener when connection closes
     ws.on('close', function() {
         eventEmitter.removeListener('newPotential',sendData);
@@ -86,23 +86,23 @@ app.ws('/potential',function(ws, req) {
 
 // Websocket to stream system information
 app.ws('/system.info',function(ws, req) {
-    
+
     // Sends new data to client
     var sendData = function(data) {
-        
+
         try {
             ws.send(JSON.stringify(data));
         }
-        
+
         catch(e) {
             console.warn('Socket closed');
         }
     };
-    
+
     // Register client to event
     eventEmitter.on('sysInfo',sendData);
     console.log('registered sysInfo');
-    
+
     // Remove listener when connection closes
     ws.on('close', function() {
         eventEmitter.removeListener('sysInfo',sendData);
@@ -112,24 +112,24 @@ app.ws('/system.info',function(ws, req) {
 
 // Websocket to stream audio
 app.ws('/audio',function(ws, req) {
-    
+
     // Sends new data to client
     var sendData = function(data) {
-        
+
         try {
             ws.send(data);
 			console.log(`Sent audio on ${new Date().getTime()}`);
         }
-        
+
         catch(e) {
             console.warn('Socket closed');
         }
     };
-    
+
     // Register client to event
     eventEmitter.on('newAudio',sendData);
     console.log('registered audio');
-    
+
     // Remove listener when connection closes
     ws.on('close', function() {
         eventEmitter.removeListener('newAudio',sendData);
@@ -154,14 +154,14 @@ console.log('Listening...');
 // Load modules
 var net = require('net');
 
-var server = net.createServer();  
+var server = net.createServer();
 server.on('connection', handleConnection);
 
-server.listen(9000, function() {  
+server.listen(9000, function() {
   console.log('server listening to %j', server.address());
 });
 
-function handleConnection(conn) {  
+function handleConnection(conn) {
   var remoteAddress = conn.remoteAddress + ':' + conn.remotePort;
   console.log('new client connection from %s', remoteAddress);
 
@@ -170,12 +170,12 @@ function handleConnection(conn) {
   conn.on('error', onConnError);
 
   function onConnData(d) {
-      
+
     var decoder = new StringDecoder();
-    
+
     // Decode received string
     var str = decoder.write(d);
-            
+
     eventEmitter.emit('newTracking',str);
 
   }
@@ -194,14 +194,14 @@ function handleConnection(conn) {
  * Create TCP server for potential sources
  */
 
-var potentialServer = net.createServer();  
+var potentialServer = net.createServer();
 potentialServer.on('connection', handlePotConnection);
 
-potentialServer.listen(9001, function() {  
+potentialServer.listen(9001, function() {
   console.log('server listening to %j', potentialServer.address());
 });
 
-function handlePotConnection(conn) {  
+function handlePotConnection(conn) {
   var remoteAddress = conn.remoteAddress + ':' + conn.remotePort;
   console.log('new client connection from %s', remoteAddress);
 
@@ -210,12 +210,12 @@ function handlePotConnection(conn) {
   conn.on('error', onConnError);
 
   function onConnData(d) {
-      
+
     var decoder = new StringDecoder();
-    
+
     // Decode received string
     var str = decoder.write(d);
-            
+
     eventEmitter.emit('newPotential',str);
 
   }
@@ -235,43 +235,21 @@ function handlePotConnection(conn) {
  */
 
 // Load modules
-var si = require('systeminformation');
 
-function updateSi() { // Gather params
-    
-    var sysInfo = {cpu:0,mem:0,temp:0};
-    
-    si.currentLoad(function(data) { 
-        sysInfo.cpu = data.currentload;
-        
-        si.mem(function(data) {
-            sysInfo.mem = (data.active/data.total)*100;
-            
-            si.cpuTemperature(function(data) {   
-                sysInfo.temp = data.main;
-                eventEmitter.emit('sysInfo',sysInfo);
-            });
-        });
-    });
-    
-}
-
-// Schedule update
-setInterval(updateSi,500);
 
 /*
  * Audio stream server
  */
 
-var audioServer = net.createServer();  
+var audioServer = net.createServer();
 audioServer.on('connection', handleAudioConnection);
 
-audioServer.listen(10001, function() {  
+audioServer.listen(10001, function() {
   console.log('server listening to %j', audioServer.address());
 });
 
-function handleAudioConnection(conn) {  
-    
+function handleAudioConnection(conn) {
+
   var remoteAddress = conn.remoteAddress + ':' + conn.remotePort;
   console.log('new client connection from %s', remoteAddress);
 
@@ -280,8 +258,8 @@ function handleAudioConnection(conn) {
   conn.on('error', onConnError);
 
   function onConnData(d) {
-      
-   console.log(`Received audio on ${new Date().getTime()}`); 
+
+   console.log(`Received audio on ${new Date().getTime()}`);
 	eventEmitter.emit('newAudio',d);
   }
 
@@ -297,16 +275,16 @@ function handleAudioConnection(conn) {
 var dummyPorts = [];
 
 for(n = 2; n<=16; n++) {
-    
+
     var dummy = net.createServer();
-    
+
     dummy.on('connection', function(conn) {
         // Dummy
     });
-    
+
     dummy.listen(10000+n);
     console.log(`Dummy listen on ${10000+n}`);
-    
+
     dummyPorts.push(dummy);
-    
+
 }

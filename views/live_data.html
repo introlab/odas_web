@@ -4,18 +4,18 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        
+
         <title>Live Data</title>
-        <link rel="icon" href="images/introlab_icon.png">
-        
-        <link href="css/bootstrap.css" rel="stylesheet">
-        <link href="css/style.css" rel="stylesheet">
-        <link href="css/bootstrap_slider.css" rel="stylesheet">
+        <link rel="icon" href="./../ressources/images/introlab_icon.png">
+
+        <link href="./../ressources/css/bootstrap.css" rel="stylesheet">
+        <link href="./../ressources/css/style.css" rel="stylesheet">
+        <link href="./../ressources/css/bootstrap_slider.css" rel="stylesheet">
     </head>
     <body>
         <div class="wrapper">
             <nav class="navbar navbar-default bg-primary navbar-fixed-top ">
-                <div class="container-fluid"> 
+                <div class="container-fluid">
 
                     <div class="navbar-header">
                         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-content" aria-expanded="false">
@@ -26,14 +26,14 @@
                         <button type="button" class="navbar-toggle collapsed navbar-button" data-toggle="collapse" data-target="#source-list" aria-expanded="false">
                             Sources
                         </button>
-                        <a class="navbar-brand navbar-logo" width="120" href="https://github.com/introlab/odas"><img src="images/introlab_icon.png"></a>
+                        <a class="navbar-brand navbar-logo" width="120" href="https://github.com/introlab/odas"><img src="./../ressources/images/introlab_icon.png"></a>
                         <a class="navbar-brand" width="120" href="https://github.com/introlab/odas"><span>ODAS</span></a>
                     </div>
 
                 <div class="collapse navbar-collapse" id="navbar-content">
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href='/'>Live Data</a></li>
-                        <li><a href="/config">Configure</a></li>
+                        <li><a href='#'>Live Data</a></li>
+                        <li><a href="#">Configure</a></li>
                     </ul>
                 </div>
 
@@ -42,7 +42,7 @@
 
             <div class="container-fluid content main">
                 <div class="row content">
-                    <div class="col-md-3 col-lg-2 layout darker">
+                    <div class="col-md-3 layout darker">
                         <h2>ODAS Data</h2>
                         <div class="well" id="system-monitor">
                             <form>
@@ -67,7 +67,7 @@
                             </form>
                         </div>
                     </div>
-                    <div class="col-md-7 col-lg-8 layout">
+                    <div class="col-md-7 layout">
                         <div class="row graph-row">
                             <div class="col-xs-12 content">
                                 <h4 class="abs_head">Source Elevation</h4>
@@ -90,7 +90,7 @@
                     </div>
                     <div class="col-md-2 layout darker">
                         <div class="collapse navbar-collapse" id="source-list">
-                            
+
                             <h2>Sources</h2>
                             <table class="table table-hover" id="source_table">
                                 <tr v-for = "source in sources">
@@ -101,7 +101,7 @@
                                     </td>
                                 </tr>
                             </table>
-                            
+
                             <h2>Filters</h2>
                             <table class="table table-hover" id="filter_table">
                                 <tr>
@@ -122,7 +122,7 @@
                             <p>Potential sources energy range:</p>
                             <b id="left-marker">0</b>
                             <input id="range_slider" type="text" class="span2" value="" data-slider-min="0" data-slider-max="1" data-slider-step="0.05" data-slider-value="[0,1]"/>
-                            <b id="right-marker">1</b> 
+                            <b id="right-marker">1</b>
                         </div>
                     </div>
                 </div>
@@ -132,31 +132,32 @@
                 <div class="container-fluid">
                     <div class="row">
                         <p class="col-xs-10 text-muted">ODAS platform web interface</p>
-                        <a href="/legal" class="col-xs-2 text-right">Legal</a>
+                        <a href="#" class="col-xs-2 text-right" onclick="openLegalWindow()">Legal</a>
                     </div>
                 </div>
             </footer>
         </div>
 
-        <script src="js/jquery.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        
-        <script src="js/vue.js"></script>
-        <script src="js/bootstrap_slider.js"></script>
-        <script src="js/interface.js"></script>
-        
-        
-        <script src="js/tcp_link.js"></script>
-        
-        <script src="js/three.min.js"></script>
-        <script src="js/stats.min.js"></script>
-        <script src="js/TrackballControls.js"></script>
-        
-        <script src="js/Chart.bundle.min.js"></script>
-        <script src="js/graph.js"></script>
-        
-        <script src="js/source_sphere.js"></script>
-        
-        <script src="js/audio_stream.js"></script>
+        <script>window.$ = window.jQuery = require('./../ressources/js/jquery.min.js');</script>
+        <script src="./../ressources/js/bootstrap.min.js"></script>
+
+        <script src="./../ressources/js/vue.js"></script>
+        <script src="./../ressources/js/bootstrap_slider.js"></script>
+        <script src="./../ressources/js/interface.js"></script>
+
+        <script src="./../ressources/js/tcp_link.js"></script>
+
+        <script src="./../ressources/js/three.min.js"></script>
+        <script src="./../ressources/js/stats.min.js"></script>
+        <script src="./../ressources/js/TrackballControls.js"></script>
+
+        <script src="./../ressources/js/Chart.bundle.min.js"></script>
+        <script src="./../ressources/js/graph.js"></script>
+
+        <script src="./../ressources/js/source_sphere.js"></script>
+
+        <script src="./../ressources/js/audio_stream.js"></script>
+
+        <script src="./../ressources/js/legal.js"></script>
     </body>
 </html>

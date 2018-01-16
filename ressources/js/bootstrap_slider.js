@@ -1,7 +1,9 @@
 /*! =======================================================
-                      VERSION  9.8.0              
+                      VERSION  9.8.0
 ========================================================= */
 "use strict";
+
+var rangeSlider;
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
@@ -82,7 +84,7 @@ var windowIsDefined = (typeof window === "undefined" ? "undefined" : _typeof(win
 	}
 
 	// Reference to Slider constructor
-	var Slider;
+ 	var Slider;
 
 	(function ($) {
 
@@ -1898,7 +1900,7 @@ var windowIsDefined = (typeof window === "undefined" ? "undefined" : _typeof(win
 		}
 	})($);
 
+	rangeSlider = new Slider('#range_slider', {});
+
 	return Slider;
 });
-
-var rangeSlider = new Slider('#range_slider', {});

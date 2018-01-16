@@ -26,18 +26,18 @@ function energyIsInRange(e) {
 
 // Get gradiant index corresponding to energy
 function scaleEnergy(e) {
-    
+
     var min = rangeSlider.getValue()[0];
     var max = rangeSlider.getValue()[1];
-    
+
     // Rescale according to minimal value
-    
+
     e -= min;
     max -= min;
-    
+
     if( e > max)
         e = max;
-    
+
     // Round energy between 0 and 10
     return Math.round((e/max)*10);
 }
@@ -49,12 +49,12 @@ function scaleEnergy(e) {
 // Single source data
 class Source {
     constructor(index) {
-        
+
         // Web UI info
         this.index = index;
         this.rgbValueString = rgbValueStrings[index];
         this.selected = true;
-        
+
         // Source info
         this.id = null;
         this.active = false;
@@ -77,15 +77,15 @@ class PotentialSource {
 // Single data frame
 class DataFrame {
     constructor() {
-        
+
         this.timestamp = null;
         this.ptimestamp = null;
-        
+
         this.sources = [];
         rgbValueStrings.forEach(function (color,i) {
             this.sources.push(new Source(i));
         }.bind(this));
-        
+
         this.potentialSources = [];
     }
 }
@@ -105,7 +105,7 @@ var sourceManager = new Vue({
     methods : {
         showHide: function(e) {
             document.dispatchEvent(new Event('update-selection'));
-        } 
+        }
     }
 });
 
@@ -127,6 +127,10 @@ var filterManager = new Vue({
     }
 });
 
+/*
+ * System Monitor
+ */
+
 // System monitor model
 var systemMonitor = new Vue({
     el: '#system-monitor',
@@ -134,3 +138,31 @@ var systemMonitor = new Vue({
         system : {cpu:'0 %',mem:0,temp:0}
     }
 });
+
+var si = require('systeminformation');
+
+function updateSi() { // Gather params
+
+    var sysInfo = {cpu:0,mem:0,temp:0};
+
+    si.currentLoad(function(data) {
+        sysInfo.cpu = data.currentload;
+
+        si.mem(function(data) {
+            sysInfo.mem = (data.active/data.total)*100;
+
+            si.cpuTemperature(function(data) {
+                sysInfo.temp = data.main;
+
+                systemMonitor.system.cpu = sysInfo.cpu.toPrecision(3).toString() + ' %';
+                systemMonitor.system.mem = sysInfo.mem.toPrecision(2).toString() + ' %';
+                systemMonitor.system.temp = sysInfo.temp.toPrecision(3).toString() + ' °C';
+
+            });
+        });
+    });
+
+}
+
+// Schedule update
+setInterval(updateSi,500);

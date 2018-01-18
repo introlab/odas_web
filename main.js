@@ -31,7 +31,7 @@ function createWindow () {
   }))
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  //mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -99,6 +99,9 @@ function handleConnection(conn) {
 
     try {
       mainWindow.webContents.send('newTracking',str);
+      if(typeof odas_process == 'undefined') {
+        mainWindow.webContents.send('remote-online');
+      }
     }
 
     catch(err) {
@@ -109,6 +112,7 @@ function handleConnection(conn) {
 
   function onConnClose() {
     console.log('connection from %s closed', remoteAddress);
+    mainWindow.webContents.send('remote-offline');
   }
 
   function onConnError(err) {
@@ -145,6 +149,9 @@ function handlePotConnection(conn) {
 
     try {
       mainWindow.webContents.send('newPotential',str);
+      if(typeof odas_process == 'undefined') {
+        mainWindow.webContents.send('remote-online', conn.remoteAddress);
+      }
     }
 
     catch(err) {
@@ -156,9 +163,40 @@ function handlePotConnection(conn) {
 
   function onConnClose() {
     console.log('connection from %s closed', remoteAddress);
+    mainWindow.webContents.send('remote-offline');
   }
 
   function onConnError(err) {
     console.log('Connection %s error: %s', remoteAddress, err.message);
   }
 }
+
+
+/*
+ * ODAS Control
+ */
+
+const ipcMain = electron.ipcMain
+const child_process = require('child_process')
+
+let odas_process
+
+ipcMain.on('launch-odas', function(event, core, config) {
+
+  console.log('received launch command')
+  console.log(core)
+  console.log(config)
+
+  odas_process = child_process.spawn(core, ['-c', config])
+
+  event.sender.send('launched-odas', true)
+})
+
+
+ipcMain.on('stop-odas', function(event) {
+
+  odas_process.kill('SIGINT')
+  odas_process = undefined
+
+  console.log('received stop command')
+})

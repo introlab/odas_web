@@ -47,7 +47,7 @@
                         <div class="well" id="system-monitor">
                             <form>
                                 <div class="form-group">
-                                    <h4>System Monitor</h4>
+                                    <h4>Local System Monitor</h4>
                                 </div>
                                 <div class="form-group">
                                     <div class="input-group">
@@ -64,7 +64,32 @@
                                         <span class="input-group-addon">Memory Usage</span><span class="form-control">{{system.mem}}</span>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">IP</span><span class="form-control">{{system.ip}}</span>
+                                    </div>
+                                </div>
+                              </form>
+                            </div>
+                            <div class="well" id="odas-local">
+                              <form>
+                                <div class="form-group">
+                                    <h4>ODAS Control</h4>
+                                </div>
+                                <div class="form-group">
+                                  <label>ODAS Core</label>
+                                  <input type="text" class="form-control" id="odas-core-path" placeholder="Not specified"/>
+                                </div>
+                                <div class="form-group">
+                                  <label>ODAS Config</label>
+                                  <input type="text" class="form-control" id="odas-config-path" placeholder="Not specified"/>
+                                </div>
                             </form>
+                            <button class="btn btn-primary" id="odas-btn">Launch ODAS</button>
+                        </div>
+                        <div class="well" id="odas-remote">
+                          <h4>ODAS Control</h4>
+                          <p>ODAS Remote is connected</p>
                         </div>
                     </div>
                     <div class="col-md-7 layout">

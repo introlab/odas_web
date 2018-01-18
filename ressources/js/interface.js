@@ -135,11 +135,12 @@ var filterManager = new Vue({
 var systemMonitor = new Vue({
     el: '#system-monitor',
     data: {
-        system : {cpu:'0 %',mem:0,temp:0}
+        system : {cpu:'0 %',mem:0,temp:0, ip:'0.0.0.0'}
     }
 });
 
 var si = require('systeminformation');
+var ip = require('ip');
 
 function updateSi() { // Gather params
 
@@ -157,6 +158,7 @@ function updateSi() { // Gather params
                 systemMonitor.system.cpu = sysInfo.cpu.toPrecision(3).toString() + ' %';
                 systemMonitor.system.mem = sysInfo.mem.toPrecision(2).toString() + ' %';
                 systemMonitor.system.temp = sysInfo.temp.toPrecision(3).toString() + ' °C';
+                systemMonitor.system.ip = ip.address();
 
             });
         });

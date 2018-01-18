@@ -20,6 +20,7 @@
     "electron": "~1.7.8",
     "express": "^4.15.2",
     "express-ws": "^3.0.0",
+    "ip": "^1.1.5",
     "systeminformation": "^3.17.3"
   }
 }

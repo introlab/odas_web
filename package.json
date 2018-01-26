@@ -1,26 +1,22 @@
 {
-  "name": "electron-quick-start",
+  "name": "ODAS_Desktop",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "A desktop GUI for the ODAS library",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
-  "repository": "https://github.com/electron/electron-quick-start",
-  "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
-  ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
-  "devDependencies": {
+  "author": "Cedric Godin",
+  "license": "GPL-3.0",
+  "dependencies": {
     "electron": "~1.7.8",
-    "express": "^4.15.2",
-    "express-ws": "^3.0.0",
     "ip": "^1.1.5",
-    "systeminformation": "^3.17.3"
+    "speaker": "^0.4.0",
+    "systeminformation": "^3.17.3",
+    "wav": "^1.0.1"
+  },
+  "repository" :
+  { "type" : "git"
+  , "url" : "https://github.com/introlab/odas_web.git"
   }
 }

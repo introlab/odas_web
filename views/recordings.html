@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Recordings</title>
+        <link href="../ressources/css/bootstrap.css" rel="stylesheet">
+        <link href="../ressources/css/bootstrap-toggle.min.css" rel="stylesheet">
+        <link href="../ressources/css/style.css" rel="stylesheet">
+    </head>
+    <body>
+        <nav class="navbar navbar-default bg-primary navbar-fixed-top ">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand navbar-logo" width="120" href="https://github.com/introlab/odas"><img src="../ressources/images/introlab_icon.png"></a>
+                        <a class="navbar-brand" width="120" href="https://github.com/introlab/odas"><span>ODAS</span></a>
+                    </div>
+                </div>
+            </nav>
+
+        <div id="recordings-table" class="container-fluid p-body layout">
+          <div class="row">
+            <div class="col-md-2 col-md-offset-3">
+              <label>Workspace Path</label>
+            </div>
+            <div class="col-md-4">
+              <input class="form-control" v-model="workspacePath" placeholder="Not defined"></input>
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-primary" onclick="changeWorkspace()">Change</button>
+            </div>
+          </div>
+          <div class="row">
+              <div class="col-md-6 col-md-offset-3">
+                <input v-model="recordingEnabled" onchange="recordControl()" type="checkbox">Record separated audio sources</input>
+                <table class="table table-hover">
+                  <tr>
+                    <th/>
+                    <th>Timestamp</th>
+                    <th>Duration</th>
+                    <th>Filename</th>
+                  </tr>
+                  <tr v-for = "recording in recordings">
+                    <td v-if="!recording.isPlaying" class="glyphicon glyphicon-play" v-on:click = "recording.play()"/>
+                    <td v-else class="glyphicon glyphicon-stop" v-on:click = "recording.stop()"/>
+                    <td>{{recording.timestamp.toLocaleString()}}</td>
+                    <td>{{recording.duration.toFixed(2)}} s</td>
+                    <td>{{recording.filename}}</td>
+                  </tr>
+                </table>
+              </div>
+          </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <p class="col-xs-10 text-muted">ODAS platform web interface</p>
+                    <a href="javascript:quit()" class="col-xs-2 text-right">Close</a>
+                </div>
+            </div>
+        </footer>
+
+        <script>window.$ = window.jQuery = require('./../ressources/js/jquery.min.js');</script>
+        <script src="./../ressources/js/bootstrap.min.js"></script>
+        <script src="./../ressources/js/bootstrap-toggle.min.js"></script>
+        <script src="./../ressources/js/vue.js"></script>
+
+        <script src="./../ressources/js/recordings_model.js"></script>
+    </body>
+</html>

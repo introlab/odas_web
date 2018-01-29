@@ -13,10 +13,11 @@
     "ip": "^1.1.5",
     "speaker": "^0.4.0",
     "systeminformation": "^3.17.3",
-    "wav": "^1.0.1"
+    "wav": "^1.0.1",
+    "wav-file-info": "0.0.8"
   },
-  "repository" :
-  { "type" : "git"
-  , "url" : "https://github.com/introlab/odas_web.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/introlab/odas_web.git"
   }
 }

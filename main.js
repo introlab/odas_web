@@ -16,11 +16,15 @@ let odasStudio = {}
 
 function createWindow () {
   // Create the browser window.
-  odasStudio.mainWindow = new BrowserWindow({width: 1200, height: 800,
+  odasStudio.mainWindow = new BrowserWindow({
+    width: 1200,
+    height: 800,
     'web-preferences': {
               'web-security': false,
               "webgl": true
-          }})
+    },
+    icon: path.join(__dirname, 'ressources/images/introlab_icon.png')
+  })
 
 
   // and load the index.html of the app.
@@ -39,6 +43,7 @@ function createWindow () {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     odasStudio.mainWindow = null
+    app.quit()
   })
 }
 
@@ -68,7 +73,10 @@ app.on('activate', function () {
 // code. You can also put them in separate files and require them here.
 
 const sockets = require('./servers.js')
+const recordings = require('./recordings.js')
 odasStudio.odas = require('./odas.js')
+
+recordings.register(odasStudio)
 
 sockets.startTrackingServer(odasStudio)
 sockets.startPotentialServer(odasStudio)

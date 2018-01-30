@@ -65,6 +65,8 @@ const processTracking = function(event, msg) {
 
                 currentFrame.sources[newMap[src.id]].id = src.id;
                 hasNewSource = true;
+
+                ipcRenderer.send('new-recording',newMap[src.id],src.id)
             }
 
             currentFrame.sources[newMap[src.id]].x = src.x;
@@ -89,6 +91,8 @@ const processTracking = function(event, msg) {
 
         currentFrame.sources[index].active = false;
         currentFrame.sources[index].selected = true;
+
+        ipcRenderer.send('end-recording',index)
     });
 
     // Trigger update

@@ -40,6 +40,7 @@
                     <th>Timestamp</th>
                     <th>Duration</th>
                     <th>Filename</th>
+                    <th/>
                   </tr>
                   <tr v-for = "recording in recordings">
                     <td v-if="!recording.isPlaying" class="glyphicon glyphicon-play" v-on:click = "recording.play()"/>
@@ -47,6 +48,7 @@
                     <td>{{recording.timestamp.toLocaleString()}}</td>
                     <td>{{recording.duration.toFixed(2)}} s</td>
                     <td>{{recording.filename}}</td>
+                    <td class="glyphicon glyphicon-remove" v-on:click = "removeRecording(recording.path)"/>
                   </tr>
                 </table>
               </div>

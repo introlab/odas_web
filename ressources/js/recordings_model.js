@@ -8,13 +8,13 @@ const dialog = require('electron').remote.dialog
 // Single recording class
 class Recording {
 
-  constructor(filename) {
+  constructor(fullPath) {
 
     // Init audio recording
     this.isPlaying = false
     this.timestamp = new Date()
-    this.filename = filename
-    this.path = path.join(os.homedir(), 'Music', this.filename)
+    this.path = fullPath
+    this.filename = path.basename(this.path)
     this.duration = 0
     this.audio = undefined
 
@@ -24,10 +24,23 @@ class Recording {
 
         this.duration = info.duration
         this.timestamp = new Date(info.stats.birthtime)
+
+        RecordingsModel.recordings.sort((a,b) => {
+          if(a.timestamp < b.timestamp)
+            return 1
+
+          else if(a.timestamp > b.timestamp)
+            return -1
+
+          else {
+            return 0
+          }
+        })
       }
 
       else {
         this.duration = -1
+        console.log(err)
       }
     })
   }
@@ -65,6 +78,15 @@ const RecordingsModel = new Vue({
     recordings: [],
     workspacePath: localStorage.workspacePath,
     recordingEnabled: false
+  },
+  methods: {
+    removeRecording(filepath) {
+
+      console.log(`Deleting ${filepath}`)
+      fs.unlinkSync(filepath)
+
+      this.recordings = this.recordings.filter((rec) => {return rec.path !== filepath})
+    }
   }
 })
 
@@ -99,7 +121,7 @@ const createList = function(workspace) {
 
       console.log(file)
       if(path.extname(file).toLowerCase() === '.wav')
-        RecordingsModel.recordings.push(new Recording(file))
+        RecordingsModel.recordings.push(new Recording(path.join(RecordingsModel.workspacePath,file)))
     })
   })
 }
@@ -124,9 +146,9 @@ const recordControl = function() {
   }
 }
 
-ipcRenderer.on('new-recording', (event, filename) => {
+ipcRenderer.on('add-recording', (event, filename) => {
 
-  RecordingsModel.recordings.push(new Recording(filename))
+  RecordingsModel.recordings.unshift(new Recording(filename))
 })
 
 // Close window and stop recording

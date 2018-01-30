@@ -76,10 +76,10 @@ body {
 
         background-color: #dfefe7;
         width: 100%;
-        
+
         z-index: 100;
     }
-    
+
     .navbar-header {
           float: none;
       }
@@ -120,15 +120,15 @@ body {
 }
 
 @media screen and (min-width: 992px) {
-    
+
     #source-list {
         position: static;
     }
-    
+
     .darker {
         background-color: #dfefe7;
     }
-    
+
     .wrapper {
     height: 100vh;
     }
@@ -136,7 +136,7 @@ body {
     .content {
         height: 100%;
     }
-    
+
     .main {
         padding-top: 0;
         padding-bottom: 0;
@@ -151,7 +151,7 @@ body {
     .graph-row {
         height: 30%
     }
-    
+
     .graph {
         max-height: none
     }
@@ -159,30 +159,30 @@ body {
     .sphere-row {
         height: 40%
     }
-    
+
     #sphere_heading {
         position: absolute;
         padding-left: 10px
     }
-    
+
     #sphere {
         padding-top: 0;
     }
-    
+
     .abs_head {
         position: absolute
     }
-    
+
     .graph {
         padding-top: 40px
     }
-    
+
     #axis {
         position: absolute;
         bottom: 0;
         left: 15px;
     }
-    
+
     .darker h2 {
         margin-top: 5px;
     }
@@ -198,4 +198,13 @@ body {
 
 #right-marker {
     margin-left: 15px
+}
+
+.control {
+  cursor: pointer;
+}
+
+.rec-body {
+  padding-top: 60px;
+  padding-bottom: 0px
 }

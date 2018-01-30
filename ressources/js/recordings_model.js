@@ -17,7 +17,13 @@ class Recording {
     this.filename = path.basename(this.path)
     this.duration = 0
     this.audio = undefined
+    this.deleting = 'hidden'
 
+    this.readInfo(true)
+
+  }
+
+  readInfo(retry) {
     // Read duration from wave file
     info.infoByFilename(this.path, (err, info) => {
       if(err == null) {
@@ -41,6 +47,9 @@ class Recording {
       else {
         this.duration = -1
         console.log(err)
+        if(retry) {
+          setTimeout(() => { this.readInfo(false)}, 3000)
+        }
       }
     })
   }

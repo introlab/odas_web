@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Recordings</title>
+        <title>Record</title>
         <link href="../ressources/css/bootstrap.css" rel="stylesheet">
         <link href="../ressources/css/bootstrap-toggle.min.css" rel="stylesheet">
         <link href="../ressources/css/style.css" rel="stylesheet">
@@ -13,52 +13,75 @@
         <nav class="navbar navbar-default bg-primary navbar-fixed-top ">
                 <div class="container-fluid">
                     <div class="navbar-header">
-                        <a class="navbar-brand navbar-logo" width="120" href="https://github.com/introlab/odas"><img src="../ressources/images/introlab_icon.png"></a>
-                        <a class="navbar-brand" width="120" href="https://github.com/introlab/odas"><span>ODAS</span></a>
+                        <a class="navbar-brand navbar-logo" width="120" href="#"><img src="../ressources/images/introlab_icon.png"></a>
+                        <a class="navbar-brand" width="120" href="#"><span>ODAS Studio</span></a>
                     </div>
                 </div>
             </nav>
-
-        <div id="recordings-table" class="container-fluid p-body layout">
-          <div class="row">
-            <div class="col-md-2 col-md-offset-3">
-              <label>Workspace Path</label>
-            </div>
-            <div class="col-md-4">
-              <input class="form-control" v-model="workspacePath" placeholder="Not defined"></input>
-            </div>
-            <div class="col-md-2">
-              <button class="btn btn-primary" onclick="changeWorkspace()">Change</button>
-            </div>
+        <div id="recordings-table">
+          <div class="container-fluid rec-body">
+            <form action="#">
+              <div class="form-group row">
+                <div class="col-sm-3">
+                  <label style="padding-top:6px" class="col-form-label">Workspace Path</label>
+                </div>
+                <div class="col-sm-7">
+                  <input class="form-control" v-model="workspacePath" placeholder="Not defined" onclick="changeWorkspace()"></input>
+                </div>
+                <div class="col-sm-2">
+                  <button type="button" style="width:100%" class="btn btn-primary" onclick="changeWorkspace()">Change</button>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-3">
+                  <label style="padding-top:6px" class="col-form-label">Record</label>
+                </div>
+                <div class="col-sm-9">
+                    <input v-model="recordingEnabled" type="checkbox" onchange="recordControl()">
+                    <span style="margin-left:10px;">Determine if separated audio is recorded</span>
+                  </input>
+                </div>
+              </div>
+            </form>
           </div>
-          <div class="row">
-              <div class="col-md-6 col-md-offset-3">
-                <input v-model="recordingEnabled" onchange="recordControl()" type="checkbox">Record separated audio sources</input>
+          <div style="height:1.5px" class="bg-primary"></div>
+          <div class="container-fluid" style="padding-bottom:15px">
+            <div class="row">
+              <div class="col-md-12">
                 <table class="table table-hover">
-                  <tr>
-                    <th/>
-                    <th>Timestamp</th>
-                    <th>Duration</th>
-                    <th>Filename</th>
-                    <th/>
-                  </tr>
-                  <tr v-for = "recording in recordings">
-                    <td v-if="!recording.isPlaying" class="glyphicon glyphicon-play" v-on:click = "recording.play()"/>
-                    <td v-else class="glyphicon glyphicon-stop" v-on:click = "recording.stop()"/>
-                    <td>{{recording.timestamp.toLocaleString()}}</td>
-                    <td>{{recording.duration.toFixed(2)}} s</td>
-                    <td>{{recording.filename}}</td>
-                    <td class="glyphicon glyphicon-remove" v-on:click = "removeRecording(recording.path)"/>
-                  </tr>
+                  <thead>
+                    <tr>
+                      <th>Play</th>
+                      <th>Timestamp</th>
+                      <th>Duration</th>
+                      <th>Filename</th>
+                      <th>Delete</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for = "recording in recordings" v-on:mouseleave = "recording.deleting = 'hidden'">
+                      <td>
+                        <span v-if="!recording.isPlaying" class="control glyphicon glyphicon-play" v-on:click = "recording.play()"></span>
+                        <span v-else class="control glyphicon glyphicon-stop" v-on:click = "recording.stop()"></span>
+                      </td>
+                      <td>{{recording.timestamp.toLocaleString()}}</td>
+                      <td>{{recording.duration.toFixed(2)}} s</td>
+                      <td>{{recording.filename}}</td>
+                      <td>
+                        <span class="control glyphicon glyphicon-remove" v-on:click = "recording.deleting = 'visible'"></span>
+                        <a class="text-danger" v-bind:style="{visibility:recording.deleting}"  href="#" v-on:click = "removeRecording(recording.path)" style="float:right">Sure</a>
+                      </td>
+                    </tr>
+                  </tbody>
                 </table>
               </div>
+            </div>
           </div>
         </div>
-
         <footer class="footer">
             <div class="container-fluid">
                 <div class="row">
-                    <p class="col-xs-10 text-muted">ODAS platform web interface</p>
+                    <p class="col-xs-10 text-muted">Graphic interface for ODAS library</p>
                     <a href="javascript:quit()" class="col-xs-2 text-right">Close</a>
                 </div>
             </div>

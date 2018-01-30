@@ -4,7 +4,6 @@ const path = require('path')
 const url = require('url')
 const net = require('net')
 const wav = require('wav')
-const reverser = require('buffer-reverse')
 
 /*  Some hardcoded parameters for now
     Should be dynamic...
@@ -31,11 +30,18 @@ exports.register = (_odasStudio) => {
 
 
 function createWindow () {
-  odasStudio.recordingsWindow = new BrowserWindow({width: 1200, height: 800,
+
+  if(odasStudio.recordingsWindow != null) {
+    odasStudio.recordingsWindow.show()
+    return
+  }
+
+  odasStudio.recordingsWindow = new BrowserWindow({width: 900, height: 700,
     'web-preferences': {
               'web-security': false,
               "webgl": true
-          }})
+          },
+        show:false})
 
   odasStudio.recordingsWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'views/recordings.html'),
@@ -47,6 +53,10 @@ function createWindow () {
   odasStudio.recordingsWindow.on('closed', function () {
     audioRecorders.forEach((recorder)=>{recorder.stopRecording()})
     odasStudio.recordingsWindow = null
+  })
+
+  odasStudio.recordingsWindow.on('ready-to-show', function() {
+    odasStudio.recordingsWindow.show()
   })
 }
 

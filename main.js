@@ -23,7 +23,8 @@ function createWindow () {
               'web-security': false,
               "webgl": true
     },
-    icon: path.join(__dirname, 'ressources/images/introlab_icon.png')
+    icon: path.join(__dirname, 'ressources/images/introlab_icon.png'),
+    show: false
   })
 
 
@@ -44,6 +45,10 @@ function createWindow () {
     // when you should delete the corresponding element.
     odasStudio.mainWindow = null
     app.quit()
+  })
+
+  odasStudio.mainWindow.on('ready-to-show', function() {
+    odasStudio.mainWindow.show()
   })
 }
 

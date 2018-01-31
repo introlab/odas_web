@@ -137,7 +137,7 @@ function init() {
 
     // Add axes labels
     var loader = new THREE.FontLoader();
-    loader.load( './../ressources/fonts/helvetiker_regular.typeface.json', function ( helFont ) {
+    loader.load( './../resources/fonts/helvetiker_regular.typeface.json', function ( helFont ) {
 
         var  textGeo = new THREE.TextGeometry('X', {
              size: 0.3,

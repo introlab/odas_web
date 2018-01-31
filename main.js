@@ -23,7 +23,7 @@ function createWindow () {
               'web-security': false,
               "webgl": true
     },
-    icon: path.join(__dirname, 'ressources/images/introlab_icon.png'),
+    icon: path.join(__dirname, 'resources/images/introlab_icon.png'),
     show: false
   })
 

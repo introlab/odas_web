@@ -7,14 +7,13 @@
     "start": "electron ."
   },
   "author": "Cedric Godin",
-  "license": "GPL-3.0",
+  "license": "MIT",
   "dependencies": {
-    "electron": "~1.7.8",
+    "electron": "^1.7.8",
     "ip": "^1.1.5",
-    "speaker": "^0.4.0",
     "systeminformation": "^3.17.3",
     "wav": "^1.0.1",
-    "wav-file-info": "0.0.8"
+    "wav-file-info": "^0.0.8"
   },
   "repository": {
     "type": "git",

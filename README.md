@@ -14,7 +14,7 @@ ODAS Studio is a desktop interface built to visually represents data produced by
 1. Run _npm install_ in root folder
 
 ### From prebuilt package
-1. Download appropriate [release](/releases/latest) for your OS.
+1. Download appropriate [release](https://github.com/introlab/odas_web/releases) for your OS.
 1. Extract to the desired location.
 
 ## Usage

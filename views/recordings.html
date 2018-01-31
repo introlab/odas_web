@@ -59,6 +59,13 @@
                     </tr>
                   </thead>
                   <tbody>
+                    <tr v-for = "recording in fuzzyRecordings">
+                      <td><span class="glyphicon glyphicon-record text-danger"></span></td>
+                      <td>{{recording.timestamp.toLocaleString()}}</td>
+                      <td></td>
+                      <td>{{recording.filename}}</td>
+                      <td></td>
+                    </tr>
                     <tr v-for = "recording in recordings" v-on:mouseleave = "recording.deleting = 'hidden'">
                       <td>
                         <span v-if="!recording.isPlaying" class="control glyphicon glyphicon-play" v-on:click = "recording.play()"></span>

@@ -5,6 +5,16 @@ const fs = require('fs')
 const info = require('wav-file-info')
 const dialog = require('electron').remote.dialog
 
+// Fuzzy recording class
+class FuzzyRecording {
+  constructor(fullPath) {
+
+    this.filename = path.basename(fullPath)
+    this.path = fullPath
+    this.timestamp = new Date()
+  }
+}
+
 // Single recording class
 class Recording {
 
@@ -85,6 +95,7 @@ const RecordingsModel = new Vue({
   el: '#recordings-table',
   data: {
     recordings: [],
+    fuzzyRecordings: [],
     workspacePath: localStorage.workspacePath,
     recordingEnabled: false
   },
@@ -158,6 +169,14 @@ const recordControl = function() {
 ipcRenderer.on('add-recording', (event, filename) => {
 
   RecordingsModel.recordings.unshift(new Recording(filename))
+  RecordingsModel.fuzzyRecordings = RecordingsModel.fuzzyRecordings.filter((recording) => {
+    return recording.path !== filename
+  })
+})
+
+ipcRenderer.on('fuzzy-recording', (event, filename) => {
+
+  RecordingsModel.fuzzyRecordings.unshift(new FuzzyRecording(filename))
 })
 
 // Close window and stop recording

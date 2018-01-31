@@ -111,6 +111,7 @@ class AudioRecorder {
 
       let filename = path.join(workspacePath, `ODAS_${id}_${new Date().toLocaleString()}.wav`)
       this.writer = new wav.FileWriter(filename,{channels:1, sampleRate:sampleRate, bitDepth:bitNumber})
+      odasStudio.recordingsWindow.webContents.send('fuzzy-recording', filename)
     }
   }
 

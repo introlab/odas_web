@@ -120,3 +120,6 @@ Click the record button at the upper right of the Live Data window to open the R
 * **Workspace Path** : specifies a folder where audio files will be recorded. It must be set before enabling recording.
 * **Record** : when selected, separated audio sources will be recorded in distinct wav files.
 * The file list displays recordings in the workspace and allows playback and deletion of files.
+
+## License
+ODAS Studio is free and open source. ODAS Studio is licensed under the [MIT License](/LICENSE).

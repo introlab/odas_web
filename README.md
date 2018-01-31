@@ -14,10 +14,12 @@ ODAS Studio is a desktop interface built to visually represents data produced by
 1. Run _npm install_ in root folder
 
 ### From prebuilt package
-Prebuilt packages are not yet released in current development stage.
+1. Download appropriate [release](/releases/latest) for your OS.
+1. Extract to the desired location.
 
 ## Usage
-Run _npm start_ in root folder to lauch the app from sources.
+* Run _npm start_ in root folder to laumch the app from sources.
+* Run the executable in the extracted release folder to launch the prebuilt app.
 
 ### Configure ODAS
 The ODAS library must be built to use ODAS Studio. ODAS Studio can be run either with a local or remote ODAS core. For local execution, it is suggested to use 127.0.0.1 as the computer IP. The _Local System Monitor_ in ODAS Studio displays the computer IP for easy configuration of a remote system.

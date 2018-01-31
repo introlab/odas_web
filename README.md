@@ -1,6 +1,8 @@
 # ODAS Studio
 A desktop user interface for the [ODAS](https://github.com/introlab/odas) library
 
+![ODAS Studio main screen screenshot](/screenshots/main.png)
+
 ## Description
 ODAS Studio is a desktop interface built to visually represents data produced by the ODAS algorithm and manage recordings of separated audio sources. ODAS Studio represents audio energy and tracked audio sources on an unit sphere and is a powerful tool when tuning ODAS settings. ODAS Studio also records separated audio as distinct wav files. ODAS Studio is built on the Electron framework and can be run natively on PC, Mac and Linux.
 
@@ -100,6 +102,8 @@ For remote execution, start ODAS in command line on the distant system. As odasc
 ### Live Data
 This is the main page of ODAS Studio.
 
+![ODAS Studio Live Data page screenshot](/screenshots/live_data.png)
+
 * **Local System Monitor** : displays performance information about the computer running ODAS Studio.
 * **ODAS Control** : is used to start and stop ODAS in local mode or indicate when a remote odascore is connected.
 * **Source Elevation** : sound source elevation relative to the X-Y pane in decimal degree.
@@ -110,6 +114,8 @@ This is the main page of ODAS Studio.
 
 ### Record
 Click the record button at the upper right of the Live Data window to open the Record window.
+
+![ODAS Studio Record page screenshot](/screenshots/record.png)
 
 * **Workspace Path** : specifies a folder where audio files will be recorded. It must be set before enabling recording.
 * **Record** : when selected, separated audio sources will be recorded in distinct wav files.

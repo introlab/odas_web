@@ -1,9 +1,10 @@
-const ipcRenderer = require('electron').ipcRenderer
-const path = require('path')
-const os = require('os')
-const fs = require('fs')
-const info = require('wav-file-info')
-const dialog = require('electron').remote.dialog
+const ipcRenderer = require('electron').ipcRenderer;
+const path = require('path');
+const os = require('os');
+const fs = require('fs');
+const info = require('wav-file-info');
+const dialog = require('electron').remote.dialog;
+const speechToText = require('./../resources/js/speech-to-text.js');
 
 // Fuzzy recording class
 class FuzzyRecording {
@@ -28,8 +29,10 @@ class Recording {
     this.duration = 0
     this.audio = undefined
     this.deleting = 'hidden'
+    this.transcription = 'Not available'
 
     this.readInfo(true)
+    this.createTranscript();
 
   }
 
@@ -62,6 +65,33 @@ class Recording {
         }
       }
     })
+  }
+
+  createTranscript() {
+
+      const txtPath = this.path.slice(0, -4)+'.txt';
+
+      fs.readFile(txtPath, 'utf-8', (err, data) => {
+          if(err) {
+              console.log('Getting transcript of ' + this.path);
+              this.transcription = 'Processing...'
+              speechToText.processFile(this.path)
+              .then(transcription => {
+                  this.transcription = transcription;
+                  fs.writeFile(txtPath, transcription, (err) => {
+                      if(err) console.log(err);
+                  })
+              })
+              .catch(err => {
+                  console.log(err);
+                  this.transcription = "Couldn't process";
+              });
+          }
+
+          else {
+              this.transcription = data;
+          }
+      });
   }
 
   play() {
@@ -97,13 +127,21 @@ const RecordingsModel = new Vue({
     recordings: [],
     fuzzyRecordings: [],
     workspacePath: localStorage.workspacePath,
-    recordingEnabled: false
+    recordingEnabled: false,
+    hovering: null,
+  },
+  computed: {
+      transcription: function() {
+          if(this.hovering) return this.hovering.transcription;
+          else return '';
+      }
   },
   methods: {
     removeRecording(filepath) {
 
       console.log(`Deleting ${filepath}`)
       fs.unlinkSync(filepath)
+      fs.unlinkSync(filepath.slice(0, -4)+'.txt')
 
       this.recordings = this.recordings.filter((rec) => {return rec.path !== filepath})
     }

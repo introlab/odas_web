@@ -4,16 +4,21 @@
   "description": "A desktop GUI for the ODAS library",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "postinstall": "./node_modules/.bin/electron-rebuild"
   },
   "author": "Cedric Godin",
   "license": "MIT",
+  "devDependencies": {
+    "electron": "~1.7.8",
+    "electron-rebuild": "^1.7.3"
+  },
   "dependencies": {
-    "electron": "^1.7.8",
     "ip": "^1.1.5",
     "systeminformation": "^3.17.3",
     "wav": "^1.0.1",
-    "wav-file-info": "^0.0.8"
+    "wav-file-info": "^0.0.8",
+    "@google-cloud/speech": "^1.0.1"
   },
   "repository": {
     "type": "git",

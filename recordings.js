@@ -4,6 +4,7 @@ const path = require('path')
 const url = require('url')
 const net = require('net')
 const wav = require('wav')
+const streamToText = require('./stream-to-text.js')
 
 /*  Some hardcoded parameters for now
     Should be dynamic...
@@ -79,6 +80,16 @@ class AudioRecorder {
     this.index = index
     this.active = false
     this.writer = undefined
+    this.path = undefined
+
+    this.transcripter = new streamToText.Transcripter()
+    this.transcripter.on('data', data => {
+        console.log(data)
+        odasStudio.recordingsWindow.webContents.send('fuzzy-transcript', this.path, data)
+    })
+    this.transcripter.on('error', err => {
+        console.error(err)
+    })
 
     ipcMain.on('new-recording', (event, index, id) => {
       if(index == this.index) {
@@ -101,17 +112,22 @@ class AudioRecorder {
 
     if(typeof(this.writer)!=='undefined') {
       this.writer.write(data)
+      this.transcripter.putData(data)
     }
   }
 
   startRecording(id) {
-    console.log('recorder started')
 
     if(typeof(this.writer) == 'undefined' && record) {
 
+      console.log('recorder started')
+
       let filename = path.join(workspacePath, `ODAS_${id}_${new Date().toLocaleString()}.wav`)
+      this.path = filename
       this.writer = new wav.FileWriter(filename,{channels:1, sampleRate:sampleRate, bitDepth:bitNumber})
       odasStudio.recordingsWindow.webContents.send('fuzzy-recording', filename)
+
+      this.transcripter.start()
     }
   }
 
@@ -121,6 +137,8 @@ class AudioRecorder {
     if(typeof(this.writer) !== 'undefined') {
 
       this.writer.end()
+      this.transcripter.stop()
+
       this.writer.on('header',(header) => {
         if(typeof(odasStudio.recordingsWindow)!='undefined') {
           odasStudio.recordingsWindow.webContents.send('add-recording', this.writer.path)

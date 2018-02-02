@@ -64,7 +64,7 @@
                   <div style="overflow: auto; padding-top: 36px; z-index:-10;">
                   <table  class="table table-hover">
                       <tbody>
-                        <tr v-for = "recording in fuzzyRecordings">
+                        <tr v-for = "recording in fuzzyRecordings" v-on:mouseenter = "hovering = recording;" v-on:mouseleave = "hovering = null;">
                           <td><span class="glyphicon glyphicon-record text-danger"></span></td>
                           <td>{{recording.timestamp.toLocaleString()}}</td>
                           <td></td>

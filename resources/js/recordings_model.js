@@ -13,13 +13,15 @@ class FuzzyRecording {
     this.filename = path.basename(fullPath)
     this.path = fullPath
     this.timestamp = new Date()
+    this.transcription = ''
+    this.potentialTranscription = ''
   }
 }
 
 // Single recording class
 class Recording {
 
-  constructor(fullPath) {
+  constructor(fullPath, transcription) {
 
     // Init audio recording
     this.isPlaying = false
@@ -30,9 +32,21 @@ class Recording {
     this.audio = undefined
     this.deleting = 'hidden'
     this.transcription = 'Not available'
+    this.potentialTranscription = ''
 
     this.readInfo(true)
-    this.createTranscript();
+
+    if(typeof(transcription) !== 'undefined') {
+        this.transcription = transcription
+        const txtPath = this.path.slice(0, -4)+'.txt';
+        fs.writeFile(txtPath, transcription, (err) => {
+            if(err) console.log(err);
+        })
+    }
+
+    else {
+        this.createTranscript();
+    }
 
   }
 
@@ -118,6 +132,13 @@ class Recording {
     }
   }
 
+  saveTranscription() {
+      const txtPath = this.path.slice(0, -4)+'.txt'
+      fs.writeFile(txtPath, this.transcription + this.potentialTranscription, (err) => {
+          if(err) console.log(err);
+      })
+  }
+
 }
 
 // Recording model
@@ -132,7 +153,7 @@ const RecordingsModel = new Vue({
   },
   computed: {
       transcription: function() {
-          if(this.hovering) return this.hovering.transcription;
+          if(this.hovering) return this.hovering.transcription + this.hovering.potentialTranscription;
           else return '';
       }
   },
@@ -144,6 +165,7 @@ const RecordingsModel = new Vue({
       fs.unlinkSync(filepath.slice(0, -4)+'.txt')
 
       this.recordings = this.recordings.filter((rec) => {return rec.path !== filepath})
+      this.hovering = null
     }
   }
 })
@@ -204,17 +226,69 @@ const recordControl = function() {
   }
 }
 
+// Receive recordings from main process
+
 ipcRenderer.on('add-recording', (event, filename) => {
 
-  RecordingsModel.recordings.unshift(new Recording(filename))
-  RecordingsModel.fuzzyRecordings = RecordingsModel.fuzzyRecordings.filter((recording) => {
-    return recording.path !== filename
-  })
+    const fuzzy = RecordingsModel.fuzzyRecordings.filter(recording => recording.path === filename)[0]
+    RecordingsModel.recordings.unshift(new Recording(filename, fuzzy.transcription + fuzzy.potentialTranscription))
+
+    RecordingsModel.fuzzyRecordings = RecordingsModel.fuzzyRecordings.filter((recording) => {
+        return recording.path !== filename
+    })
 })
 
 ipcRenderer.on('fuzzy-recording', (event, filename) => {
 
   RecordingsModel.fuzzyRecordings.unshift(new FuzzyRecording(filename))
+})
+
+ipcRenderer.on('fuzzy-transcript', (event, filename, data) => {
+
+    let isFuzzy = true
+
+    console.log('fuzzy data ' + data + ' at ' + filename)
+    let target = RecordingsModel.fuzzyRecordings.filter(recording => recording.path === filename)
+
+    console.log(target)
+    if(target.length < 1) {
+        target = RecordingsModel.recordings.filter(recording => recording.path === filename)
+        isFuzzy = false
+    }
+
+    console.log(target[0])
+
+    if(isFuzzy) {
+
+        let transcript = target[0].transcription
+        let potentialTranscript = ''
+
+        data.map(result => {
+
+            if(result.is_final) {
+                transcript += result.alternatives[0].transcript
+            }
+
+            else {
+                potentialTranscript += result.alternatives[0].transcript
+            }
+        })
+
+        target[0].transcription += transcript
+        target[0].potentialTranscription = potentialTranscript
+    }
+
+    else {
+
+        data.map(result => {
+
+            if(result.is_final) {
+                target[0].transcription += result.alternatives[0].transcript
+            }
+        })
+
+        target[0].saveTranscription()
+    }
 })
 
 // Close window and stop recording

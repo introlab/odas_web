@@ -1,7 +1,9 @@
 const EventEmitter = require('events');
 const speech = require('@google-cloud/speech');
 
-const client = new speech.SpeechClient();
+const client = new speech.SpeechClient({
+    keyFilename: 'google-api-key.json'
+});
 
 const languageCode = "fr-CA";
 

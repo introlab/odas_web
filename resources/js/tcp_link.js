@@ -98,8 +98,8 @@ const processTracking = function(event, msg) {
     // Trigger update
     document.dispatchEvent(new Event('tracking'));
 
-    if(hasNewSource)
-        document.dispatchEvent(new Event('update-selection'));
+    // Send to main
+    ipcRenderer.send('tracking', currentFrame.sources);
 };
 
 ipcRenderer.on('newTracking', processTracking)

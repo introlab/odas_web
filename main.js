@@ -79,6 +79,7 @@ app.on('activate', function () {
 
 const sockets = require('./servers.js')
 const recordings = require('./recordings.js')
+const share = require('./share.js')
 odasStudio.odas = require('./odas.js')
 
 recordings.register(odasStudio)

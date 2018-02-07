@@ -11,7 +11,8 @@
   "license": "MIT",
   "devDependencies": {
     "electron": "~1.7.8",
-    "electron-rebuild": "^1.7.3"
+    "electron-rebuild": "^1.7.3",
+    "electron-packager": "^10.1.2"
   },
   "dependencies": {
     "@google-cloud/speech": "^1.0.1",

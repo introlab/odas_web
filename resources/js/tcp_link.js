@@ -177,6 +177,7 @@ document.addEventListener('clearChart', function(e){
     currentFrame.potentialSources = [];
 
     document.dispatchEvent(new Event('tracking'));
+    ipcRenderer.send('tracking', currentFrame.sources);
     document.dispatchEvent(new Event('potential'));
     document.dispatchEvent(new Event('update-selection'));
 

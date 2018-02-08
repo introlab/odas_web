@@ -10,7 +10,7 @@ var errorCallback = function(e) {
   };
 
   // Not showing vendor prefixes.
-  navigator.getUserMedia({video: true, audio: false}, function(localMediaStream) {
+  navigator.getUserMedia({video: { width: {min:1920}, height:{min:1080}}, audio: false}, function(localMediaStream) {
     var video = document.getElementById('video-frame')
     video.src = window.URL.createObjectURL(localMediaStream);
   }, errorCallback);
@@ -28,17 +28,19 @@ ipcRenderer.on('tracking', (event, data)=> {
                 z: source.z
             };
 
-            let coord = pointToImage.transform(point);
+            let video = document.getElementById('video-frame');
+
+            let scale = video.offsetWidth / 1920;
+            let coord = pointToImage.transform(point,scale);
 
             marker.style.top = coord.y-25 + 'px';
             marker.style.left = coord.x-25 + 'px';
-            let video = document.getElementById('video-frame');
 
             if(coord.y < 0 || coord.x < 0) {
                 marker.style.display = 'none';
             }
 
-            else if(coord.x > video.offsetWidth || coord.y > video.offsetHeight) {
+            else if(coord.x > 1920*scale || coord.y > 1080*scale) {
                 marker.style.display = 'none';
             }
 

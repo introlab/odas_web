@@ -1,12 +1,12 @@
 math = require('mathjs');
 
 mtx = [
-    [  788.9292, 0, 329.4620],
-    [0, 785.3060, 229.3576],
+    [ 1389.6, 0,   995.9],
+    [0, 1387.2, 598.5],
     [0, 0, 1.0000]
 ];
 
-exports.transform = function(point) {
+exports.transform = function(point, scale) {
 
     pt = [
         -point.x,
@@ -16,5 +16,5 @@ exports.transform = function(point) {
 
     coord = math.multiply(mtx, pt);
 
-    return { x: coord[0], y: coord[1]};
+    return { x: coord[0]*scale, y: coord[1]*scale};
 }

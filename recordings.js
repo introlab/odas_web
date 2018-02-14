@@ -79,6 +79,8 @@ class AudioRecorder {
 
     this.index = index
     this.active = false
+		this.hold = false
+		this.buffer = undefined
     this.writer = undefined
     this.path = undefined
 
@@ -110,41 +112,121 @@ class AudioRecorder {
 
   receive(data) {
 
-    if(typeof(this.writer)!=='undefined') {
-      this.writer.write(data)
-      this.transcripter.putData(data)
+    if(this.active) {
+			
+			if(this.hold) {
+				
+				if(typeof(this.buffer) !== 'undefined') {
+					
+					this.buffer = Buffer.concat([this.buffer, data])
+				}
+				
+				else {
+					
+					this.buffer = data
+				}
+			}
+			
+			else {
+				
+				try {
+					
+					if(typeof(this.buffer) !== 'undefined') {
+						data = Buffer.concat([this.buffer, data])
+						this.buffer = undefined
+						
+						console.log(`Wrote samples buffered in writer ${this.index}`)
+					}
+				
+					if( !this.writer.write(data)) {
+
+						//let error = new Error(`Write stream ${this.index} is full`)
+						//throw error
+						console.warn(`Write stream ${this.index} is full\nHolding samples...`)
+						this.hold = true
+					}
+				}
+
+				catch(err) {
+						console.error(`Couldn't write to recorder ${this.index}`)
+						console.warn(err)
+
+						this.stopRecording()
+				}
+				
+			}
+			
+			this.transcripter.putData(data)
     }
   }
 
   startRecording(id) {
 
-    if(typeof(this.writer) == 'undefined' && record) {
+    if(record) {
+			
+			if(typeof(this.writer) !== 'undefined') {	// Verify that previous recording is cleared
+				setTimeout(() => {
+					this.startRecording(id)
+					console.log(`Recorder ${id} was defined. Retrying...`)
+				}, 100)
+				
+				return
+			}
 
-      console.log('recorder started')
+      console.log(`Recorder ${this.index} started`)
+			console.log(`Recorder ${this.index} was ${this.active} active`)
 
       let filename = path.join(workspacePath, `ODAS_${id}_${new Date().toLocaleString()}.wav`)
       this.path = filename
-      this.writer = new wav.FileWriter(filename,{channels:1, sampleRate:sampleRate, bitDepth:bitNumber})
-      odasStudio.recordingsWindow.webContents.send('fuzzy-recording', filename)
+			
+			try {
+				this.writer = new wav.FileWriter(filename,{channels:1, sampleRate:sampleRate, bitDepth:bitNumber})
+      	odasStudio.recordingsWindow.webContents.send('fuzzy-recording', filename)
+				
+				this.writer.on('drain', () => {
+					console.log(`Writer ${this.index} is empty.\nResuming...`)
+					this.hold = false
+				})
 
-      this.transcripter.start()
+				this.active = true
+				this.hold = false
+				this.buffer = undefined
+				this.transcripter.start()
+			}
+			
+      catch(err) {
+				console.error(`Failed to start recorder ${this.index}`)
+				console.log(err);
+				
+				this.writer = undefined
+			}
     }
   }
 
   stopRecording() {
     //console.log('recorder stopped')
 
-    if(typeof(this.writer) !== 'undefined') {
+    if(this.active) {
 
-      this.writer.end()
+			this.active = false;
+			console.log(`Recorder ${this.index} ended`)
       this.transcripter.stop()
-
+			
+			console.log(`Registering header on recorder ${this.index}`)
+			this.writer.end()
+			
       this.writer.on('header',(header) => {
+				
+				console.log(`Registered header on recorder ${this.index}`)
+				
         if(typeof(odasStudio.recordingsWindow)!='undefined') {
           odasStudio.recordingsWindow.webContents.send('add-recording', this.writer.path)
         }
+						
+				this.writer = undefined
+				console.log(`Recorder ${this.index} undefined`)
 
-        this.writer = undefined
+		  
       })
     }
   }
@@ -184,7 +266,6 @@ class AudioSocket {
               audioRecorders.forEach((recorder, index) => {
 
                 recorder.receive(new Buffer.from(data.slice(offset + index*jump, offset + index*jump + delta +1)))
-                //recorder.receive(new Buffer.from([data[offset+index*jump],data[offset+index*jump+delta]]))
               })
 
               offset += (bitNumber / 8)*nChannels

@@ -115,7 +115,7 @@ class AudioRecorder {
     if(this.active) {
 			
 			if(this.hold) {
-				
+				/*
 				if(typeof(this.buffer) !== 'undefined') {
 					
 					this.buffer = Buffer.concat([this.buffer, data])
@@ -125,19 +125,20 @@ class AudioRecorder {
 					
 					this.buffer = data
 				}
+				*/
 			}
 			
 			else {
 				
 				try {
-					
+					/*
 					if(typeof(this.buffer) !== 'undefined') {
 						data = Buffer.concat([this.buffer, data])
 						this.buffer = undefined
 						
 						console.log(`Wrote samples buffered in writer ${this.index}`)
 					}
-				
+				*/
 					if( !this.writer.write(data)) {
 
 						//let error = new Error(`Write stream ${this.index} is full`)
@@ -156,7 +157,7 @@ class AudioRecorder {
 				
 			}
 			
-			this.transcripter.putData(data)
+			//this.transcripter.putData(data)
     }
   }
 
@@ -191,7 +192,7 @@ class AudioRecorder {
 				this.active = true
 				this.hold = false
 				this.buffer = undefined
-				this.transcripter.start()
+				//this.transcripter.start()
 			}
 			
       catch(err) {
@@ -210,7 +211,7 @@ class AudioRecorder {
 
 			this.active = false;
 			console.log(`Recorder ${this.index} ended`)
-      this.transcripter.stop()
+      //this.transcripter.stop()
 			
 			console.log(`Registering header on recorder ${this.index}`)
 			this.writer.end()
@@ -257,24 +258,22 @@ class AudioSocket {
         let jump = bitNumber/8
         let delta = jump-1
 
-        if(record) {
 
-          try {
+				try {
 
-            while(offset < data.length) {
+					while(offset < data.length) {
 
-              audioRecorders.forEach((recorder, index) => {
+						audioRecorders.forEach((recorder, index) => {
 
-                recorder.receive(new Buffer.from(data.slice(offset + index*jump, offset + index*jump + delta +1)))
-              })
+							recorder.receive(new Buffer.from(data.slice(offset + index*jump, offset + index*jump + delta +1)))
+						})
 
-              offset += (bitNumber / 8)*nChannels
-            }
+						offset += (bitNumber / 8)*nChannels
+					}
 
-          } catch(e) {
-            console.log(e)
-          }
-        }
+				} catch(e) {
+					console.log(e)
+				}
 
       })
 

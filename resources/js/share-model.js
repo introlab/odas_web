@@ -5,6 +5,17 @@ const pointToImage = require("../resources/js/point-to-image.js");
 const markers = document.getElementsByClassName('marker');
 var rgbValueStrings = ["rgb(75,192,192)","rgb(192,75,192)","rgb(192,192,30)","rgb(0,200,40)"];
 
+var errorCallback = function(e) {
+    console.log('Reeeejected!', e);
+  };
+
+  // Not showing vendor prefixes.
+  navigator.getUserMedia({video: { width: {min:1920}, height:{min:1080}}, audio: false}, function(localMediaStream) {
+    var video = document.getElementById('video-frame')
+    video.src = window.URL.createObjectURL(localMediaStream);
+  }, errorCallback);
+
+
 ipcRenderer.on('tracking', (event, data)=> {
 
     data.forEach(source => {
@@ -19,7 +30,7 @@ ipcRenderer.on('tracking', (event, data)=> {
 
             let video = document.getElementById('video-frame');
 
-            let scale = video.offsetWidth / 1640;
+            let scale = video.offsetWidth / 1920;
             let coord = pointToImage.transform(point,scale);
 
             marker.style.top = coord.y-25 + 'px';
@@ -29,7 +40,7 @@ ipcRenderer.on('tracking', (event, data)=> {
                 marker.style.display = 'none';
             }
 
-            else if(coord.x > 1640*scale || coord.y > 1640*scale) {
+            else if(coord.x > 1920*scale || coord.y > 1080*scale) {
                 marker.style.display = 'none';
             }
 

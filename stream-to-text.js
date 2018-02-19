@@ -28,6 +28,7 @@ exports.Transcripter = class Transcripter extends EventEmitter {
     }
 
     start() {
+			
         this.stream = client.streamingRecognize(request)
         .on('error', (err) => {
             this.emit('error', err);
@@ -38,20 +39,25 @@ exports.Transcripter = class Transcripter extends EventEmitter {
             else if(data.results)
                 this.emit('data', data.results);
         });
+				
     }
 
     stop() {
+			
         this.stream.end();
         this.stream = null;
         this.dataBuffer = Buffer.alloc(0);
+				
     }
 
     putData(data) {
+			
         this.dataBuffer = Buffer.concat([this.dataBuffer, data]);
 
         if(this.dataBuffer.length > 882) {
             this.stream.write(this.dataBuffer);
             this.dataBuffer = Buffer.alloc(0);
         }
+				
     }
 }

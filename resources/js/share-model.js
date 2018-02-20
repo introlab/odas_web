@@ -4,7 +4,7 @@ const pointToImage = require("../resources/js/point-to-image.js");
 
 const markers = document.getElementsByClassName('marker');
 var rgbValueStrings = ["rgb(75,192,192)","rgb(192,75,192)","rgb(192,192,30)","rgb(0,200,40)"];
-
+/*
 var errorCallback = function(e) {
     console.log('Reeeejected!', e);
   };
@@ -14,7 +14,7 @@ var errorCallback = function(e) {
     var video = document.getElementById('video-frame')
     video.src = window.URL.createObjectURL(localMediaStream);
   }, errorCallback);
-
+*/
 
 ipcRenderer.on('tracking', (event, data)=> {
 

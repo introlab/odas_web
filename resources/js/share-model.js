@@ -30,7 +30,7 @@ ipcRenderer.on('tracking', (event, data)=> {
 
             let video = document.getElementById('video-frame');
 
-            let scale = video.offsetWidth / 1920;
+            let scale = video.offsetWidth / 640;
             let coord = pointToImage.transform(point,scale);
 
             marker.style.top = coord.y-25 + 'px';
@@ -40,7 +40,7 @@ ipcRenderer.on('tracking', (event, data)=> {
                 marker.style.display = 'none';
             }
 
-            else if(coord.x > 1920*scale || coord.y > 1080*scale) {
+            else if(coord.x > 640*scale || coord.y > 480*scale) {
                 marker.style.display = 'none';
             }
 

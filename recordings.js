@@ -3,8 +3,6 @@ const fs = require('fs')
 const path = require('path')
 const url = require('url')
 const net = require('net')
-const wav = require('wav')
-const streamToText = require('./stream-to-text.js')
 
 /*  Some hardcoded parameters for now
     Should be dynamic...
@@ -20,8 +18,13 @@ const BrowserWindow = electron.BrowserWindow
 const ipcMain = electron.ipcMain
 
 let odasStudio
-let workspacePath
-let record = false
+
+let audioRecorders = [];
+const recorderUrl = url.format({
+    pathname: path.join(__dirname, 'views', 'audio-recorder.html'),
+    protocol: 'file',
+    slashes: true
+});
 
 exports.register = (_odasStudio) => {
 
@@ -52,190 +55,22 @@ function createWindow () {
 
   // Emitted when the window is closed.
   odasStudio.recordingsWindow.on('closed', function () {
-    audioRecorders.forEach((recorder)=>{recorder.stopRecording()})
+    audioRecorders.forEach((recorder)=>{recorder.webContents.send('terminate-recording')})
     odasStudio.recordingsWindow = null
   })
 
   odasStudio.recordingsWindow.on('ready-to-show', function() {
     odasStudio.recordingsWindow.show()
   })
-}
 
-// Receive recording control
-ipcMain.on('start-recording', (event, workspace) => {
-  workspacePath = workspace
-  record = true
-})
+  audioRecorders = [];
+  for(i=0; i<nChannels; i++) {
 
-ipcMain.on('stop-recording', (event) => {
-  record = false
-  workspacePath = undefined
-})
-
-// Audio Recorder
-class AudioRecorder {
-
-  constructor(index) {
-
-    this.index = index
-    this.active = false
-		this.hold = false
-		this.buffer = undefined
-    this.writer = undefined
-    this.path = undefined
-
-    this.transcripter = new streamToText.Transcripter()
-    this.transcripter.on('data', data => {
-        console.log(data)
-        odasStudio.recordingsWindow.webContents.send('fuzzy-transcript', this.path, data)
-    })
-    this.transcripter.on('error', err => {
-        console.error(err)
-    })
-
-    ipcMain.on('new-recording', (event, index, id) => {
-      if(index == this.index) {
-        this.startRecording(id)
-      }
-    })
-
-    ipcMain.on('end-recording', (event, index) => {
-      if(index == this.index) {
-        this.stopRecording()
-      }
-    })
-
-    ipcMain.on('stop-recording', (event) => {
-      this.stopRecording()
-    })
+        let recorder = new BrowserWindow({width: 150, height: 150, minWidth: i, show: true});
+        recorder.loadURL(recorderUrl);
+        audioRecorders.push(recorder);
+        console.log(recorder);
   }
-
-  receive(data) {
-
-    if(this.active) {
-			
-			if(this.hold) {
-				/*
-				if(typeof(this.buffer) !== 'undefined') {
-					
-					this.buffer = Buffer.concat([this.buffer, data])
-				}
-				
-				else {
-					
-					this.buffer = data
-				}
-				*/
-			}
-			
-			else {
-				
-				try {
-					/*
-					if(typeof(this.buffer) !== 'undefined') {
-						data = Buffer.concat([this.buffer, data])
-						this.buffer = undefined
-						
-						console.log(`Wrote samples buffered in writer ${this.index}`)
-					}
-				*/
-					if( !this.writer.write(data)) {
-
-						//let error = new Error(`Write stream ${this.index} is full`)
-						//throw error
-						console.warn(`Write stream ${this.index} is full\nHolding samples...`)
-						this.hold = true
-					}
-				}
-
-				catch(err) {
-						console.error(`Couldn't write to recorder ${this.index}`)
-						console.warn(err)
-
-						this.stopRecording()
-				}
-				
-			}
-			
-			//this.transcripter.putData(data)
-    }
-  }
-
-  startRecording(id) {
-
-    if(record) {
-			
-			if(typeof(this.writer) !== 'undefined') {	// Verify that previous recording is cleared
-				setTimeout(() => {
-					this.startRecording(id)
-					console.log(`Recorder ${id} was defined. Retrying...`)
-				}, 100)
-				
-				return
-			}
-
-      console.log(`Recorder ${this.index} started`)
-			console.log(`Recorder ${this.index} was ${this.active} active`)
-
-      let filename = path.join(workspacePath, `ODAS_${id}_${new Date().toLocaleString()}.wav`)
-      this.path = filename
-			
-			try {
-				this.writer = new wav.FileWriter(filename,{channels:1, sampleRate:sampleRate, bitDepth:bitNumber})
-      	odasStudio.recordingsWindow.webContents.send('fuzzy-recording', filename)
-				
-				this.writer.on('drain', () => {
-					console.log(`Writer ${this.index} is empty.\nResuming...`)
-					this.hold = false
-				})
-
-				this.active = true
-				this.hold = false
-				this.buffer = undefined
-				//this.transcripter.start()
-			}
-			
-      catch(err) {
-				console.error(`Failed to start recorder ${this.index}`)
-				console.log(err);
-				
-				this.writer = undefined
-			}
-    }
-  }
-
-  stopRecording() {
-    //console.log('recorder stopped')
-
-    if(this.active) {
-
-			this.active = false;
-			console.log(`Recorder ${this.index} ended`)
-      //this.transcripter.stop()
-			
-			console.log(`Registering header on recorder ${this.index}`)
-			this.writer.end()
-			
-      this.writer.on('header',(header) => {
-				
-				console.log(`Registered header on recorder ${this.index}`)
-				
-        if(typeof(odasStudio.recordingsWindow)!='undefined') {
-          odasStudio.recordingsWindow.webContents.send('add-recording', this.writer.path)
-        }
-						
-				this.writer = undefined
-				console.log(`Recorder ${this.index} undefined`)
-
-		  
-      })
-    }
-  }
-}
-
-const audioRecorders = []
-for(i=0; i<nChannels; i++) {
-  audioRecorders.push(new AudioRecorder(i))
 }
 
 // TCP socket
@@ -265,7 +100,7 @@ class AudioSocket {
 
 						audioRecorders.forEach((recorder, index) => {
 
-							recorder.receive(new Buffer.from(data.slice(offset + index*jump, offset + index*jump + delta +1)))
+							recorder.webContents.send('audio-data', receive(new Buffer.from(data.slice(offset + index*jump, offset + index*jump + delta +1))));
 						})
 
 						offset += (bitNumber / 8)*nChannels
@@ -279,11 +114,12 @@ class AudioSocket {
 
       conn.once('close', () => {
         console.log('connection from %s closed', remoteAddress)
-        audioRecorders.forEach((recorder) => { recorder.stopRecording() })
+        audioRecorders.forEach((recorder) => { recorder.webContents.send('stop-recording'); });
       })
 
       conn.on('error', (err) => {
         console.log('Connection %s error: %s', remoteAddress, err.message)
+        audioRecorders.forEach((recorder) => { recorder.webContents.send('stop-recording'); });
       })
     })
 

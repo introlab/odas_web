@@ -1,5 +1,6 @@
 const electron = require('electron');
 const fork = require('child_process').fork;
+const spawn = require('child_process').spawn;
 const path = require('path')
 const url = require('url')
 
@@ -10,7 +11,7 @@ const ipcMain = electron.ipcMain;
  * Start the recording process
  */
 
-const recordingProcess = fork('./recordings.js');
+const recordingProcess = spawn(process.execPath, ['./recordings.js'], {stdio: [0, 1, 2, 'ipc']});
 exports.quit = function quit() {
     recordingProcess.kill();
 }

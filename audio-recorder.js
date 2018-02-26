@@ -1,4 +1,4 @@
-//const streamToText = require('./stream-to-text.js');
+const streamToText = require('./stream-to-text.js');
 const path = require('path');
 const wav = require('wav')
 const EventEmitter = require('events');
@@ -29,7 +29,7 @@ exports.AudioRecorder =  class AudioRecorder extends EventEmitter {
         this.buffer = undefined;
         this.writer = undefined;
         this.path = undefined;
-/*
+
         this.transcripter = new streamToText.Transcripter();
 
         this.transcripter.on('data', data => {
@@ -39,7 +39,7 @@ exports.AudioRecorder =  class AudioRecorder extends EventEmitter {
 
         this.transcripter.on('error', err => {
             console.error(err);
-        });*/
+        });
     }
 
     receive(data) {
@@ -88,7 +88,7 @@ exports.AudioRecorder =  class AudioRecorder extends EventEmitter {
 
             }
 
-            //this.transcripter.putData(data);
+            this.transcripter.putData(data);
 
         }
     }
@@ -124,7 +124,7 @@ exports.AudioRecorder =  class AudioRecorder extends EventEmitter {
                 this.active = true;
                 this.hold = false;
                 this.buffer = undefined;
-                //this.transcripter.start();
+                this.transcripter.start();
             }
 
             catch(err) {
@@ -141,7 +141,7 @@ exports.AudioRecorder =  class AudioRecorder extends EventEmitter {
 
             this.active = false;
             console.log(`Recorder ${this.index} ended`);
-            //this.transcripter.stop();
+            this.transcripter.stop();
 
             console.log(`Registering header on recorder ${this.index}`);
             this.writer.end();

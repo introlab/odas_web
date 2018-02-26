@@ -1,8 +1,8 @@
-const electron = require('electron')
 const fs = require('fs')
 const path = require('path')
 const url = require('url')
 const net = require('net')
+const AudioRecorder = require('./audio-recorder.js').AudioRecorder
 
 /*  Some hardcoded parameters for now
     Should be dynamic...
@@ -14,66 +14,36 @@ const sampleRate = 44100
     End of parameters
 */
 
-const BrowserWindow = electron.BrowserWindow
-const ipcMain = electron.ipcMain
+/*
+ * Construct audio recorders
+ */
 
-let odasStudio
+const audioRecorders = [];
 
-let audioRecorders = [];
-const recorderUrl = url.format({
-    pathname: path.join(__dirname, 'views', 'audio-recorder.html'),
-    protocol: 'file',
-    slashes: true
-});
+for(i=0; i<nChannels; i++) {
+    let recorder = new AudioRecorder(i);
 
-exports.register = (_odasStudio) => {
+    // Relay messages from recorder to main process
+    recorder.on('fuzzy-transcript', (filename, data) => {
+        process.send({event:'fuzzy-transcript', filename:filename, data:data});
+    });
 
-  odasStudio = _odasStudio
-  ipcMain.on('open-recordings-window', createWindow)
+    recorder.on('fuzzy-recording', filename => {
+        process.send({event:'fuzzy-recording', filename:filename});
+    });
+
+    recorder.on('add-recording', filename => {
+        process.send({event:'add-recording', filename:filename});
+    })
+
+    console.log(recorder);
+    audioRecorders.push(recorder);
 }
 
+/*
+ * Construct audio socket server
+ */
 
-function createWindow () {
-
-  if(odasStudio.recordingsWindow != null) {
-    odasStudio.recordingsWindow.show()
-    return
-  }
-
-  odasStudio.recordingsWindow = new BrowserWindow({width: 900, height: 700,
-    'web-preferences': {
-              'web-security': false,
-              "webgl": true
-          },
-        show:false})
-
-  odasStudio.recordingsWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'views/recordings.html'),
-    protocol: 'file:',
-    slashes: true
-  }))
-
-  // Emitted when the window is closed.
-  odasStudio.recordingsWindow.on('closed', function () {
-    audioRecorders.forEach((recorder)=>{recorder.webContents.send('terminate-recording')})
-    odasStudio.recordingsWindow = null
-  })
-
-  odasStudio.recordingsWindow.on('ready-to-show', function() {
-    odasStudio.recordingsWindow.show()
-  })
-
-  audioRecorders = [];
-  for(i=0; i<nChannels; i++) {
-
-        let recorder = new BrowserWindow({width: 150, height: 150, minWidth: i, show: true});
-        recorder.loadURL(recorderUrl);
-        audioRecorders.push(recorder);
-        console.log(recorder);
-  }
-}
-
-// TCP socket
 class AudioSocket {
 
   constructor() {
@@ -100,7 +70,7 @@ class AudioSocket {
 
 						audioRecorders.forEach((recorder, index) => {
 
-							recorder.webContents.send('audio-data', receive(new Buffer.from(data.slice(offset + index*jump, offset + index*jump + delta +1))));
+							recorder.receive(new Buffer.from(data.slice(offset + index*jump, offset + index*jump + delta +1)));
 						})
 
 						offset += (bitNumber / 8)*nChannels
@@ -114,12 +84,16 @@ class AudioSocket {
 
       conn.once('close', () => {
         console.log('connection from %s closed', remoteAddress)
-        audioRecorders.forEach((recorder) => { recorder.webContents.send('stop-recording'); });
+        audioRecorders.forEach((recorder) => {
+            recorder.stopRecording();
+        });
       })
 
       conn.on('error', (err) => {
         console.log('Connection %s error: %s', remoteAddress, err.message)
-        audioRecorders.forEach((recorder) => { recorder.webContents.send('stop-recording'); });
+        audioRecorders.forEach((recorder) => {
+            recorder.stopRecording();
+        });
       })
     })
 
@@ -131,3 +105,35 @@ class AudioSocket {
 }
 
 const audioServer = new AudioSocket()
+
+/*
+ * Control recorder according to commands received
+ */
+
+process.on('message', m => {
+    switch(m.event) {
+        case 'new-recording':
+            audioRecorders[m.index].startRecording(m.id);
+            break;
+
+        case 'end-recording':
+            audioRecorders[m.index].stopRecording();
+            break;
+
+        case 'start-recording':
+            audioRecorders.forEach(recorder => {
+                recorder.enableRecording(m.workspace);
+            });
+            break;
+
+        case 'stop-recording':
+            audioRecorders.forEach(recorder => {
+                recorder.disableRecording();
+            });
+            break;
+
+        default:
+            console.warn(`Unhandled main process message ${m}`);
+            break;
+    }
+});

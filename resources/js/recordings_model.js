@@ -4,7 +4,7 @@ const os = require('os');
 const fs = require('fs');
 const info = require('wav-file-info');
 const dialog = require('electron').remote.dialog;
-const speechToText = require('./../resources/js/speech-to-text.js');
+//const speechToText = require('./../resources/js/speech-to-text.js');
 
 // Fuzzy recording class
 class FuzzyRecording {
@@ -43,11 +43,11 @@ class Recording {
             if(err) console.log(err);
         })
     }
-
+/*
     else {
         this.createTranscript();
     }
-
+*/
   }
 
   readInfo(retry) {
@@ -80,7 +80,7 @@ class Recording {
       }
     })
   }
-
+/*
   createTranscript() {
 
       const txtPath = this.path.slice(0, -4)+'.txt';
@@ -107,7 +107,7 @@ class Recording {
           }
       });
   }
-
+*/
   play() {
     this.isPlaying = true
 

@@ -44,6 +44,7 @@ function createWindow () {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     odasStudio.mainWindow = null
+    record.quit()
     app.quit()
   })
 
@@ -78,11 +79,9 @@ app.on('activate', function () {
 // code. You can also put them in separate files and require them here.
 
 const sockets = require('./servers.js')
-const recordings = require('./recordings.js')
+const record = require('./record.js')
 const share = require('./share.js')
 odasStudio.odas = require('./odas.js')
-
-recordings.register(odasStudio)
 
 sockets.startTrackingServer(odasStudio)
 sockets.startPotentialServer(odasStudio)

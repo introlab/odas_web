@@ -37,19 +37,17 @@
                 </div>
                 <div class="form-group" v-bind:class="{ 'has-error' : languageStringError}" v-if="useSpeech">
                     <label for="language-select" class="col-xs-3 control-label">Transcription Language</label>
-                    <div class="form-row">
-                        <div class="col-xs-6">
-                            <select class="form-control" id="language-select" v-model="languageCode">
-                                <option value="en-US">English (United States)</option>
-                                <option value="en-CA">English (Canada)</option>
-                                <option value="fr-CA">Français (Canada)</option>
-                                <option value="fr-FR">Français (France)</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
-                        <div class="col-xs-3" v-if="customLanguage">
-                            <input type="text" placeholder="ll-CC" class="form-control" id="language-input" v-model="languageString"/>
-                        </div>
+                    <div class="col-xs-6">
+                        <select class="form-control" id="language-select" v-model="languageCode">
+                            <option value="en-US">English (United States)</option>
+                            <option value="en-CA">English (Canada)</option>
+                            <option value="fr-CA">Français (Canada)</option>
+                            <option value="fr-FR">Français (France)</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="col-xs-3" v-if="customLanguage">
+                        <input type="text" placeholder="ll-CC" class="form-control" id="language-input" v-model="languageString"/>
                     </div>
                 </div>
                 <div class="form-group"  v-bind:class="{ 'has-error' : sampleRateError}">

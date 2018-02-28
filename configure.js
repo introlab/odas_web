@@ -56,10 +56,17 @@ const getSettings = function() {
 
 const setSettings = function(settings) {
 
-    appSettings.language = settings.language;
-    appSettings.sampleRate = settings.sampleRate;
-    appSettings.apiKeyfile = settings.apiKeyfile;
-    appSettings.useSpeech = settings.useSpeech;
+    if(settings.useSpeech) {
+        appSettings.language = settings.language;
+        appSettings.sampleRate = settings.sampleRate;
+        appSettings.apiKeyfile = settings.apiKeyfile;
+        appSettings.useSpeech = settings.useSpeech;
+    }
+
+    else {
+        appSettings.sampleRate = settings.sampleRate;
+        appSettings.useSpeech = settings.useSpeech;
+    }
 }
 
 /*

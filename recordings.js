@@ -4,15 +4,18 @@ const url = require('url')
 const net = require('net')
 const AudioRecorder = require('./audio-recorder.js').AudioRecorder
 
-/*  Some hardcoded parameters for now
-    Should be dynamic...
-*/
+/*
+ * Audio parameters
+ */
+
 const bitNumber = 16
 const nChannels = 4
-const sampleRate = 44100
+
 /*
-    End of parameters
-*/
+ * Parse arguments
+ */
+const portNumber = parseInt(process.argv[2]);
+const suffix = process.argv[3];
 
 /*
  * Construct audio recorders
@@ -21,7 +24,7 @@ const sampleRate = 44100
 const audioRecorders = [];
 
 for(i=0; i<nChannels; i++) {
-    let recorder = new AudioRecorder(i);
+    let recorder = new AudioRecorder(i, suffix);
 
     // Relay messages from recorder to main process
     recorder.on('fuzzy-transcript', (filename, data) => {
@@ -36,7 +39,6 @@ for(i=0; i<nChannels; i++) {
         process.send({event:'add-recording', filename:filename});
     })
 
-    console.log(recorder);
     audioRecorders.push(recorder);
 }
 
@@ -48,15 +50,16 @@ class AudioSocket {
 
   constructor() {
 
-    this.port = 10000
+    this.port = portNumber;
+    this.connected = false;
     this.server = net.createServer()
 
     this.server.on('connection', (conn) => {
 
       var remoteAddress = conn.remoteAddress + ':' + conn.remotePort
       console.log('new client connection from %s', remoteAddress)
+      this.connected = true;
 
-      console.log(this)
       conn.on('data', (data) => {
 
         let offset = 0
@@ -84,6 +87,7 @@ class AudioSocket {
 
       conn.once('close', () => {
         console.log('connection from %s closed', remoteAddress)
+        this.connected = false;
         audioRecorders.forEach((recorder) => {
             recorder.stopRecording();
         });
@@ -91,6 +95,7 @@ class AudioSocket {
 
       conn.on('error', (err) => {
         console.log('Connection %s error: %s', remoteAddress, err.message)
+        this.connected = false;
         audioRecorders.forEach((recorder) => {
             recorder.stopRecording();
         });

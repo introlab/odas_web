@@ -2,13 +2,14 @@ const streamToText = require('./stream-to-text.js');
 const path = require('path');
 const wav = require('wav')
 const EventEmitter = require('events');
+const appSettings = require('./settings.js').appSettings;
 
-/*  Some hardcoded parameters for now
-    Should be dynamic...
-*/
+/*
+ * Audio parameters
+ */
+
 const bitNumber = 16
-const nChannels = 4
-const sampleRate = 44100
+
 /*
     End of parameters
 */
@@ -16,7 +17,7 @@ const sampleRate = 44100
 // Audio Recorder
 exports.AudioRecorder =  class AudioRecorder extends EventEmitter {
 
-    constructor(index) {
+    constructor(index, suffix) {
         super();
 
         this.active = false;
@@ -25,6 +26,7 @@ exports.AudioRecorder =  class AudioRecorder extends EventEmitter {
 
         this.recordingEnabled = false;
         this.workspacePath = '';
+        this.suffix = suffix;
 
         this.buffer = undefined;
         this.writer = undefined;
@@ -109,11 +111,11 @@ exports.AudioRecorder =  class AudioRecorder extends EventEmitter {
             console.log(`Recorder ${this.index} started`)
             console.log(`Recorder ${this.index} was ${this.active} active`)
 
-            let filename = path.join(this.workspacePath, `ODAS_${id}_${new Date().toLocaleString()}.wav`)
+            let filename = path.join(this.workspacePath, `ODAS_${id}_${new Date().toLocaleString()}_${this.suffix}.wav`)
             this.path = filename
 
             try {
-                this.writer = new wav.FileWriter(filename,{channels:1, sampleRate:sampleRate, bitDepth:bitNumber});
+                this.writer = new wav.FileWriter(filename,{channels:1, sampleRate:appSettings.sampleRate, bitDepth:bitNumber});
                 this.emit('fuzzy-recording', filename);
 
                 this.writer.on('drain', () => { // Release hold when write stream is cleared

@@ -1,24 +1,6 @@
 const EventEmitter = require('events');
 const speech = require('@google-cloud/speech');
-
-const client = new speech.SpeechClient({
-    keyFilename: 'google-api-key.json'
-});
-
-const languageCode = "fr-CA";
-
-exports.setLanguage = function(code) {
-    languageCode = code;
-}
-
-const request = {
-    config: {
-        encoding: 'LINEAR16',
-        sampleRateHertz: 44100,
-        languageCode: languageCode
-    },
-    interimResults: true
-};
+const appSettings = require('./settings.js').appSettings;
 
 exports.Transcripter = class Transcripter extends EventEmitter {
     constructor() {
@@ -28,6 +10,19 @@ exports.Transcripter = class Transcripter extends EventEmitter {
     }
 
     start() {
+
+        const client = new speech.SpeechClient({
+            keyFilename: appSettings.apiKeyfile
+        });
+
+        const request = {
+            config: {
+                encoding: 'LINEAR16',
+                sampleRateHertz: appSettings.sampleRate,
+                languageCode: appSettings.language
+            },
+            interimResults: true
+        };
 
         this.stream = client.streamingRecognize(request)
         .on('error', (err) => {
@@ -54,7 +49,7 @@ exports.Transcripter = class Transcripter extends EventEmitter {
 
         this.dataBuffer = Buffer.concat([this.dataBuffer, data]);
 
-        if(this.dataBuffer.length > 882) {
+        if(this.dataBuffer.length > (appSettings.sampleRate / 10)) {
             this.stream.write(this.dataBuffer);
             this.dataBuffer = Buffer.alloc(0);
         }

@@ -149,12 +149,19 @@ const RecordingsModel = new Vue({
     fuzzyRecordings: [],
     workspacePath: localStorage.workspacePath,
     recordingEnabled: false,
+    filter: '',
     hovering: null,
   },
   computed: {
       transcription: function() {
           if(this.hovering) return this.hovering.transcription + this.hovering.potentialTranscription;
           else return '';
+      },
+      selectedRecordings: function() {
+          return this.recordings.filter(recording => {return recording.filename.includes(this.filter)});
+      },
+      selectedFuzzyRecordings: function() {
+          return this.fuzzyRecordings.filter(recording => {return recording.filename.includes(this.filter)});
       }
   },
   methods: {
@@ -204,6 +211,30 @@ const createList = function(workspace) {
         RecordingsModel.recordings.push(new Recording(path.join(RecordingsModel.workspacePath,file)))
     })
   })
+}
+
+// Delete all recordings from workspace
+const deleteAll = function() {
+    if(confirm('This will delete all wav and txt files in current workspace folder.\nContinue?')) {
+        fs.readdir(RecordingsModel.workspacePath, (err, files) => {
+
+            files.forEach(file => {
+                try {
+                    if(path.extname(file).toLowerCase() === '.wav')
+                       fs.unlinkSync(path.join(RecordingsModel.workspacePath,file));
+                    else if(path.extname(file).toLowerCase() === '.txt')
+                        fs.unlinkSync(path.join(RecordingsModel.workspacePath,file));
+                }
+                catch(e) {
+                    console.warn(`Couln'd delete ${file}`);
+                    console.error(e);
+                }
+            });
+
+            RecordingsModel.recordings = [];
+            RecordingsModel.hovering = null;
+        });
+    }
 }
 
 // Control recording

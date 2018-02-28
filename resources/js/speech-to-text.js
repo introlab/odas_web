@@ -1,15 +1,6 @@
 const fs = require('fs');
 const speech = require('@google-cloud/speech');
-
-const client = new speech.SpeechClient({
-    keyFilename: 'google-api-key.json'
-});
-
-const languageCode = "fr-CA";
-
-exports.setLanguage = function(code) {
-    languageCode = code;
-}
+const appSettings = require('./../../settings.js').appSettings;
 
 const readFile = function(filepath) {
 
@@ -24,8 +15,12 @@ const readFile = function(filepath) {
 
 const processData = function(data) {
 
+    const client = new speech.SpeechClient({
+        keyFilename: appSettings.apiKeyfile
+    });
+
     const config = {
-        languageCode: languageCode
+        languageCode: appSettings.language
     };
 
     const audio = {

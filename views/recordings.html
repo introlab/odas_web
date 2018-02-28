@@ -26,29 +26,44 @@
                   <label style="padding-top:6px" class="col-form-label">Workspace Path</label>
                 </div>
                 <div class="col-xs-7">
-                  <input class="form-control" v-model="workspacePath" placeholder="Not defined" onclick="changeWorkspace()"></input>
+                  <input class="form-control" v-model="workspacePath" placeholder="Not defined" onclick="changeWorkspace()"/></input>
                 </div>
                 <div class="col-xs-2">
                   <button type="button" style="width:100%" class="btn btn-primary" onclick="changeWorkspace()">Change</button>
                 </div>
               </div>
+            <div class="form-group row">
+                  <div class="col-xs-3">
+                    <label class="col-form-label">Show</label>
+                  </div>
+                  <div class="col-xs-7">
+                    <select class="form-control" v-model="filter" onchange="">
+                      <option value="pf">Post-filtered</option>
+                      <option value="sp">Separated</option>
+                      <option value="">All</option>
+                    </select>
+                  </div>
+                  <div class="col-xs-2">
+                      <button type="button" style="width:100%" class="btn btn-danger" onclick="deleteAll()">Delete All</button>
+                  </div>
+              </div>
               <div class="form-group row">
                 <div class="col-xs-3">
-                  <label style="padding-top:6px" class="col-form-label">Record</label>
+                  <label class="col-form-label">Record</label>
                 </div>
-                <div class="col-xs-9">
-                    <input v-model="recordingEnabled" type="checkbox" onchange="recordControl()">
-                    <span style="margin-left:10px;">Determine if separated audio is recorded</span>
+                <div class="col-xs-9 form-check">
+                    <input class="form-check-input" v-model="recordingEnabled" type="checkbox" onchange="recordControl()">
+                    <label class="form-check-label">Determine if separated audio is recorded</label>
                   </input>
                 </div>
               </div>
             </form>
           </div>
-          <div class="bg-primary" style="height:1.5px; position:fixed; top:145px; width:100%; z-index:15"></div>
-          <div class="container-fluid" style="padding-top:150px; padding-bottom:136.5px;">
+          <div class="bg-primary" style="height:1.5px; position:fixed; top:188px; width:100%; z-index:15"></div>
+          <div class="container-fluid" style="padding-top:190px; padding-bottom:136.5px;">
             <div class="row">
               <div class="col-md-12">
-                <div style="position:fixed; top: 150px; width:100%; background-color:white; padding-bottom:0px; z-index:10">
+                <div style="position:fixed; top: 190px; width:100%; background-color:white; padding-bottom:0px; z-index:10">
                   <table class="table table-hover" style="margin-bottom:0px">
                     <thead>
                       <tr>
@@ -64,14 +79,14 @@
                   <div style="overflow: auto; padding-top: 36px; z-index:-10;">
                   <table  class="table table-hover">
                       <tbody>
-                        <tr v-for = "recording in fuzzyRecordings" v-on:mouseenter = "hovering = recording;" v-on:mouseleave = "hovering = null;">
+                        <tr v-for = "recording in selectedFuzzyRecordings" v-on:mouseenter = "hovering = recording;" v-on:mouseleave = "hovering = null;">
                           <td><span class="glyphicon glyphicon-record text-danger"></span></td>
                           <td>{{recording.timestamp.toLocaleString()}}</td>
                           <td></td>
                           <td>{{recording.filename}}</td>
                           <td></td>
                         </tr>
-                        <tr v-for = "recording in recordings" v-on:mouseenter = "hovering = recording;" v-on:mouseleave = "hovering = null; recording.deleting = 'hidden'">
+                        <tr v-for = "recording in selectedRecordings" v-on:mouseenter = "hovering = recording;" v-on:mouseleave = "hovering = null; recording.deleting = 'hidden'">
                           <td>
                             <span v-if="!recording.isPlaying" class="control glyphicon glyphicon-play" v-on:click = "recording.play()"></span>
                             <span v-else class="control glyphicon glyphicon-stop" v-on:click = "recording.stop()"></span>

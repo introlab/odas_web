@@ -19,6 +19,7 @@
     "grpc": "^1.9.1",
     "ip": "^1.1.5",
     "mathjs": "^3.20.1",
+    "node-localstorage": "^1.3.0",
     "systeminformation": "^3.17.3",
     "wav": "^1.0.1",
     "wav-file-info": "^0.0.8"

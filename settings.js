@@ -30,7 +30,7 @@ class AppSettings {
     }
 
     get sampleRate() {
-        return localStorage.getItem('sample-rate');
+        return parseInt(localStorage.getItem('sample-rate'));
     }
 
     set apiKeyfile(apiKeyfile) {
@@ -46,7 +46,7 @@ class AppSettings {
     }
 
     get useSpeech() {
-        return localStorage.getItem('use-speech');
+        return localStorage.getItem('use-speech') === 'true';
     }
 }
 

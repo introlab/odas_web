@@ -10,7 +10,7 @@ exports.Transcripter = class Transcripter extends EventEmitter {
     }
 
     start() {
-        if(appSettings.useSpeech == true) {
+        if(appSettings.useSpeech) {
 
             const client = new speech.SpeechClient({
                 keyFilename: appSettings.apiKeyfile

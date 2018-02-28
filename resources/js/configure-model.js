@@ -102,7 +102,7 @@ saveButton.addEventListener('click', event => {
     }
 });
 
-keyfileInput.addEventListener('click', event => {
+const browseKey = function(event) {
 
     dialog.showOpenDialog(
         {properties: ['openFile'], title: 'Select Google Api key file'},
@@ -111,7 +111,7 @@ keyfileInput.addEventListener('click', event => {
                 configureModel.apiKeyfile = files[0];
         }
     );
-});
+}
 
 /*
  * Get settings from main process

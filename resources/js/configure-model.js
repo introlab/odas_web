@@ -10,6 +10,7 @@ const configureModel = new Vue({
     el: "#configure-form",
 
     data: {
+        useSpeech: false,
         apiKeyfile: 'google-api-key.json',
         languageCode: 'fr-CA',
         languageCodesList: ['fr-CA', 'fr-FR', 'en-US', 'en-CA'],
@@ -41,7 +42,8 @@ const configureModel = new Vue({
             return !/([a-z]{2}-[A-Z]{2})/.test(this.language);
         },
         hasError: function() {
-            return this.sampleRateError || this.languageStringError || this.apiKeyfileError;
+            let speechError = (this.languageStringError || this.apiKeyfileError) && this.useSpeech;
+            return this.sampleRateError || speechError;
         }
     },
 
@@ -49,6 +51,7 @@ const configureModel = new Vue({
         applySettings: function(settings) {
             this.sampleRate = settings.sampleRate;
             this.apiKeyfile = settings.apiKeyfile;
+            this.useSpeech = settings.useSpeech;
 
             if(this.languageCodesList.indexOf(settings.language) >= 0) {
                 this.languageCode = settings.language;
@@ -93,7 +96,8 @@ saveButton.addEventListener('click', event => {
         ipcRenderer.send('set-settings', {
             language: configureModel.language,
             apiKeyfile: configureModel.apiKeyfile,
-            sampleRate: configureModel.sampleRate
+            sampleRate: configureModel.sampleRate,
+            useSpeech: configureModel.useSpeech
         });
     }
 });

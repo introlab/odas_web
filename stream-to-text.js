@@ -10,49 +10,50 @@ exports.Transcripter = class Transcripter extends EventEmitter {
     }
 
     start() {
+        if(appSettings.useSpeech == true) {
 
-        const client = new speech.SpeechClient({
-            keyFilename: appSettings.apiKeyfile
-        });
+            const client = new speech.SpeechClient({
+                keyFilename: appSettings.apiKeyfile
+            });
 
-        const request = {
-            config: {
-                encoding: 'LINEAR16',
-                sampleRateHertz: appSettings.sampleRate,
-                languageCode: appSettings.language
-            },
-            interimResults: true
-        };
+            const request = {
+                config: {
+                    encoding: 'LINEAR16',
+                    sampleRateHertz: appSettings.sampleRate,
+                    languageCode: appSettings.language
+                },
+                interimResults: true
+            };
 
-        this.stream = client.streamingRecognize(request)
-        .on('error', (err) => {
-            this.emit('error', err);
-        })
-        .on('data', (data) => {
-            if(data.error)
-                this.emit('error', data.error);
-            else if(data.results)
-                this.emit('data', data.results);
-        });
-
+            this.stream = client.streamingRecognize(request)
+            .on('error', (err) => {
+                this.emit('error', err);
+            })
+            .on('data', (data) => {
+                if(data.error)
+                    this.emit('error', data.error);
+                else if(data.results)
+                    this.emit('data', data.results);
+            });
+        }
     }
 
     stop() {
-
-        this.stream.end();
-        this.stream = null;
-        this.dataBuffer = Buffer.alloc(0);
-
+        if(this.stream != null) {
+            this.stream.end();
+            this.stream = null;
+            this.dataBuffer = Buffer.alloc(0);
+        }
     }
 
     putData(data) {
+        if(this.stream != null) {
+            this.dataBuffer = Buffer.concat([this.dataBuffer, data]);
 
-        this.dataBuffer = Buffer.concat([this.dataBuffer, data]);
-
-        if(this.dataBuffer.length > (appSettings.sampleRate / 10)) {
-            this.stream.write(this.dataBuffer);
-            this.dataBuffer = Buffer.alloc(0);
+            if(this.dataBuffer.length > (appSettings.sampleRate / 10)) {
+                this.stream.write(this.dataBuffer);
+                this.dataBuffer = Buffer.alloc(0);
+            }
         }
-
     }
 }

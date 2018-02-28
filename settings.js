@@ -12,6 +12,9 @@ class AppSettings {
 
         if(localStorage.getItem('api-keyfile') == null)
             localStorage.setItem('api-keyfile', 'google-api-key.json');
+
+        if(localStorage.getItem('use-speech') == null)
+            localStorage.setItem('use-speech', false);
     }
 
     set language(language) {
@@ -36,6 +39,14 @@ class AppSettings {
 
     get apiKeyfile() {
         return localStorage.getItem('api-keyfile');
+    }
+
+    set useSpeech(useSpeech) {
+        localStorage.setItem('use-speech', useSpeech);
+    }
+
+    get useSpeech() {
+        return localStorage.getItem('use-speech');
     }
 }
 

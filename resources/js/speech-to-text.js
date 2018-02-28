@@ -45,7 +45,9 @@ const processData = function(data) {
 }
 
 exports.processFile = function(filepath) {
-
-    return readFile(filepath)
-    .then(content => processData(content))
+    if(appSettings.useSpeech == true) {
+        return readFile(filepath).then(content => processData(content));
+    }
+    else
+        return '';
 }

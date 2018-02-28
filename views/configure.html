@@ -20,13 +20,22 @@
 
         <div class="container-fluid" style="padding-top: 70px">
             <form class="form-horizontal" onsubmit="return false" id="configure-form">
-                <div class="form-group" v-bind:class="{ 'has-error' : apiKeyfileError}">
+                <div class="form-group">
+                    <div class="col-xs-9 col-xs-offset-3">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" v-model="useSpeech"/>Use Google Speech Voice Recognition
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" v-bind:class="{ 'has-error' : apiKeyfileError}" v-if="useSpeech">
                     <label for="api-keyfile-input" class="col-xs-3 control-label">Google API Keyfile</label>
                     <div class="col-xs-9">
                         <input type="url" class="form-control" id="api-keyfile-input" v-model="apiKeyfile"/>
                     </div>
                 </div>
-                <div class="form-group" v-bind:class="{ 'has-error' : languageStringError}">
+                <div class="form-group" v-bind:class="{ 'has-error' : languageStringError}" v-if="useSpeech">
                     <label for="language-select" class="col-xs-3 control-label">Transcription Language</label>
                     <div class="form-row">
                         <div class="col-xs-6">

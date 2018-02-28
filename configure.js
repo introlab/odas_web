@@ -47,7 +47,8 @@ const getSettings = function() {
     let settings = {
         language: appSettings.language,
         sampleRate: appSettings.sampleRate,
-        apiKeyfile: appSettings.apiKeyfile
+        apiKeyfile: appSettings.apiKeyfile,
+        useSpeech: appSettings.useSpeech
     };
 
     return settings;
@@ -58,6 +59,7 @@ const setSettings = function(settings) {
     appSettings.language = settings.language;
     appSettings.sampleRate = settings.sampleRate;
     appSettings.apiKeyfile = settings.apiKeyfile;
+    appSettings.useSpeech = settings.useSpeech;
 }
 
 /*

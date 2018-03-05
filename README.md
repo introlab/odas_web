@@ -50,31 +50,7 @@ tracked: {
 * **SSS**
 ```
 separated: {
-  fS = 44100;
-  hopSize = 512;
-  nBits = 16;        
-
-  interface: {
-    type = "blackhole";
-  }        
-};
-
-postfiltered: {
-  fS = 44100;
-  hopSize = 512;
-  nBits = 16;        
-
-  interface: {
-    type = "socket";
-    ip = "<IP>";
-    port = 10000;
-  }        
-};
-```
-**OR**
-```
-separated: {
-  fS = 44100;
+  fS = <SAMPLE RATE>;
   hopSize = 512;
   nBits = 16;        
 
@@ -86,12 +62,14 @@ separated: {
 };
 
 postfiltered: {
-  fS = 44100;
+  fS = <SAMPLE RATE>;
   hopSize = 512;
   nBits = 16;        
 
   interface: {
-    type = "blackhole";
+    type = "socket";
+    ip = "<IP>";
+    port = 10001;
   }        
 };
 ```
@@ -120,8 +98,20 @@ Click the record button at the upper right of the Live Data window to open the R
 ![ODAS Studio Record page screenshot](/screenshots/record.png)
 
 * **Workspace Path** : specifies a folder where audio files will be recorded. It must be set before enabling recording.
+* **Show** : chooses to dispay either separated, postfiltered or all recordings.
 * **Record** : when selected, separated audio sources will be recorded in distinct wav files.
 * The file list displays recordings in the workspace and allows playback and deletion of files.
+* The transcript displays the speech to text transcription of the hovered recording.
+
+### Configure
+Click the configure button at the upper right of the Live Data window to open the Configure window.
+
+![ODAS Studio Configure page screenshot](/screenshots/configure.png)
+
+* **Use Google Speech Voice Recognition** : sends recorded audio to Google Speech service to generate transcriptions.
+* **Google API Keyfile** : path to your Google Speech API json key.
+* **Transcription Language** : language in which the recorded audio is processed by Google.
+* **Sample Rate** : sample rate of the audio streams produced by ODAS. Must match ODAS sink config file.
 
 ## License
 ODAS Studio is free and open source. ODAS Studio is licensed under the [MIT License](/LICENSE).

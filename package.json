@@ -1,6 +1,6 @@
 {
   "name": "ODAS_Desktop",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A desktop GUI for the ODAS library",
   "main": "main.js",
   "scripts": {

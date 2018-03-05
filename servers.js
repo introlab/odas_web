@@ -9,6 +9,8 @@ let potentialServer
  * Create TCP server for source tracking
  */
 
+ let remainingTrack = '';
+
  exports.startTrackingServer = (odasStudio) => {
 
    trackingServer = net.createServer();
@@ -31,19 +33,41 @@ let potentialServer
        var decoder = new StringDecoder();
 
        // Decode received string
-       var str = decoder.write(d);
-
-       try {
-         odasStudio.mainWindow.webContents.send('newTracking',str);
-         if(typeof odasStudio.odas.odas_process == 'undefined') {
-           odasStudio.mainWindow.webContents.send('remote-online');
-         }
+       var stream = remainingTrack + decoder.write(d);
+       strs = stream.split("}\n{");
+       if(strs.length < 2) {
+           remainingTrack = stream;
+           return;
        }
 
-       catch(err) {
-         console.log('Window was closed');
-       }
+       strs.forEach((str,index) => {
 
+           if(index == strs.length-1) {
+               remainingTrack = str;
+               return;
+           }
+
+           if(str.charAt(0) !== '{') {
+               str = '{' + str;
+           }
+
+           if(str.charAt(str.length-2) !== '}') {
+               if(str.charAt(str.length-3)!== '}') {
+                   str = str + '}';
+               }
+           }
+
+           try {
+             odasStudio.mainWindow.webContents.send('newTracking',str);
+             if(typeof odasStudio.odas.odas_process == 'undefined') {
+               odasStudio.mainWindow.webContents.send('remote-online');
+             }
+           }
+
+           catch(err) {
+             console.log('Window was closed');
+           }
+       });
      }
 
      function onConnClose() {
@@ -62,6 +86,8 @@ let potentialServer
 /*
  * Create TCP server for potential sources
  */
+
+ let remainingPot = '';
 
  exports.startPotentialServer = (odasStudio) => {
 
@@ -85,19 +111,41 @@ let potentialServer
        var decoder = new StringDecoder();
 
        // Decode received string
-       var str = decoder.write(d);
-
-       try {
-         odasStudio.mainWindow.webContents.send('newPotential',str);
-         if(typeof odasStudio.odas.odas_process == 'undefined') {
-           odasStudio.mainWindow.webContents.send('remote-online', conn.remoteAddress);
-         }
+       var stream = remainingPot + decoder.write(d);
+       strs = stream.split("}\n{");
+       if(strs.length < 2) {
+           remainingPot = stream;
+           return;
        }
 
-       catch(err) {
+       strs.forEach((str,index) => {
 
-         console.log('Window was closed');
-       }
+           if(index == strs.length-1) {
+               remainingPot = str;
+               return;
+           }
+
+           try {
+
+               if(str.charAt(0) !== '{') {
+                   str = '{' + str;
+               }
+
+               if(str.charAt(str.length-2) !== '}') {
+                   if(str.charAt(str.length-3)!== '}') {
+                       str = str + '}';
+                   }
+               }
+             odasStudio.mainWindow.webContents.send('newPotential',str);
+             if(typeof odasStudio.odas.odas_process == 'undefined') {
+               odasStudio.mainWindow.webContents.send('remote-online');
+             }
+           }
+
+           catch(err) {
+             console.log('Window was closed');
+           }
+       });
 
      }
 

@@ -1,9 +1,10 @@
-const ipcRenderer = require('electron').ipcRenderer
-const path = require('path')
-const os = require('os')
-const fs = require('fs')
-const info = require('wav-file-info')
-const dialog = require('electron').remote.dialog
+const ipcRenderer = require('electron').ipcRenderer;
+const path = require('path');
+const os = require('os');
+const fs = require('fs');
+const info = require('wav-file-info');
+const dialog = require('electron').remote.dialog;
+const speechToText = require('./../resources/js/speech-to-text.js');
 
 // Fuzzy recording class
 class FuzzyRecording {
@@ -12,13 +13,15 @@ class FuzzyRecording {
     this.filename = path.basename(fullPath)
     this.path = fullPath
     this.timestamp = new Date()
+    this.transcription = ''
+    this.potentialTranscription = ''
   }
 }
 
 // Single recording class
 class Recording {
 
-  constructor(fullPath) {
+  constructor(fullPath, transcription) {
 
     // Init audio recording
     this.isPlaying = false
@@ -28,8 +31,22 @@ class Recording {
     this.duration = 0
     this.audio = undefined
     this.deleting = 'hidden'
+    this.transcription = 'Not available'
+    this.potentialTranscription = ''
 
     this.readInfo(true)
+
+    if(typeof(transcription) !== 'undefined') {
+        this.transcription = transcription
+        const txtPath = this.path.slice(0, -4)+'.txt';
+        fs.writeFile(txtPath, transcription, (err) => {
+            if(err) console.log(err);
+        })
+    }
+
+    else {
+        this.createTranscript();
+    }
 
   }
 
@@ -64,6 +81,33 @@ class Recording {
     })
   }
 
+  createTranscript() {
+
+      const txtPath = this.path.slice(0, -4)+'.txt';
+
+      fs.readFile(txtPath, 'utf-8', (err, data) => {
+          if(err) {
+              console.log('Getting transcript of ' + this.path);
+              this.transcription = 'Processing...'
+              speechToText.processFile(this.path)
+              .then(transcription => {
+                  this.transcription = transcription;
+                  fs.writeFile(txtPath, transcription, (err) => {
+                      if(err) console.log(err);
+                  })
+              })
+              .catch(err => {
+                  console.log(err);
+                  this.transcription = "Couldn't process";
+              });
+          }
+
+          else {
+              this.transcription = data;
+          }
+      });
+  }
+
   play() {
     this.isPlaying = true
 
@@ -88,6 +132,13 @@ class Recording {
     }
   }
 
+  saveTranscription() {
+      const txtPath = this.path.slice(0, -4)+'.txt'
+      fs.writeFile(txtPath, this.transcription + this.potentialTranscription, (err) => {
+          if(err) console.log(err);
+      })
+  }
+
 }
 
 // Recording model
@@ -97,15 +148,31 @@ const RecordingsModel = new Vue({
     recordings: [],
     fuzzyRecordings: [],
     workspacePath: localStorage.workspacePath,
-    recordingEnabled: false
+    recordingEnabled: false,
+    filter: '',
+    hovering: null,
+  },
+  computed: {
+      transcription: function() {
+          if(this.hovering) return this.hovering.transcription + this.hovering.potentialTranscription;
+          else return '';
+      },
+      selectedRecordings: function() {
+          return this.recordings.filter(recording => {return recording.filename.includes(this.filter)});
+      },
+      selectedFuzzyRecordings: function() {
+          return this.fuzzyRecordings.filter(recording => {return recording.filename.includes(this.filter)});
+      }
   },
   methods: {
     removeRecording(filepath) {
 
       console.log(`Deleting ${filepath}`)
       fs.unlinkSync(filepath)
+      fs.unlinkSync(filepath.slice(0, -4)+'.txt')
 
       this.recordings = this.recordings.filter((rec) => {return rec.path !== filepath})
+      this.hovering = null
     }
   }
 })
@@ -146,6 +213,30 @@ const createList = function(workspace) {
   })
 }
 
+// Delete all recordings from workspace
+const deleteAll = function() {
+    if(confirm('This will delete all wav and txt files in current workspace folder.\nContinue?')) {
+        fs.readdir(RecordingsModel.workspacePath, (err, files) => {
+
+            files.forEach(file => {
+                try {
+                    if(path.extname(file).toLowerCase() === '.wav')
+                       fs.unlinkSync(path.join(RecordingsModel.workspacePath,file));
+                    else if(path.extname(file).toLowerCase() === '.txt')
+                        fs.unlinkSync(path.join(RecordingsModel.workspacePath,file));
+                }
+                catch(e) {
+                    console.warn(`Couln'd delete ${file}`);
+                    console.error(e);
+                }
+            });
+
+            RecordingsModel.recordings = [];
+            RecordingsModel.hovering = null;
+        });
+    }
+}
+
 // Control recording
 const recordControl = function() {
   if(RecordingsModel.recordingEnabled) {
@@ -166,17 +257,69 @@ const recordControl = function() {
   }
 }
 
+// Receive recordings from main process
+
 ipcRenderer.on('add-recording', (event, filename) => {
 
-  RecordingsModel.recordings.unshift(new Recording(filename))
-  RecordingsModel.fuzzyRecordings = RecordingsModel.fuzzyRecordings.filter((recording) => {
-    return recording.path !== filename
-  })
+    const fuzzy = RecordingsModel.fuzzyRecordings.filter(recording => recording.path === filename)[0]
+    RecordingsModel.recordings.unshift(new Recording(filename, fuzzy.transcription + fuzzy.potentialTranscription))
+
+    RecordingsModel.fuzzyRecordings = RecordingsModel.fuzzyRecordings.filter((recording) => {
+        return recording.path !== filename
+    })
 })
 
 ipcRenderer.on('fuzzy-recording', (event, filename) => {
 
   RecordingsModel.fuzzyRecordings.unshift(new FuzzyRecording(filename))
+})
+
+ipcRenderer.on('fuzzy-transcript', (event, filename, data) => {
+
+    let isFuzzy = true
+
+    console.log('fuzzy data ' + data + ' at ' + filename)
+    let target = RecordingsModel.fuzzyRecordings.filter(recording => recording.path === filename)
+
+    console.log(target)
+    if(target.length < 1) {
+        target = RecordingsModel.recordings.filter(recording => recording.path === filename)
+        isFuzzy = false
+    }
+
+    console.log(target[0])
+
+    if(isFuzzy) {
+
+        let transcript = target[0].transcription
+        let potentialTranscript = ''
+
+        data.map(result => {
+
+            if(result.is_final) {
+                transcript += result.alternatives[0].transcript
+            }
+
+            else {
+                potentialTranscript += result.alternatives[0].transcript
+            }
+        })
+
+        target[0].transcription += transcript
+        target[0].potentialTranscription = potentialTranscript
+    }
+
+    else {
+
+        data.map(result => {
+
+            if(result.is_final) {
+                target[0].transcription += result.alternatives[0].transcript
+            }
+        })
+
+        target[0].saveTranscription()
+    }
 })
 
 // Close window and stop recording

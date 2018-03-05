@@ -3,6 +3,7 @@ const rebuild = require('electron-rebuild').rebuild;
 
 packager({
     dir: '.',
+    ignore: 'google-api-key.json',
     afterCopy: [
         (buildPath, electronVersion, platform, arch, callback) => {
             rebuild({ buildPath, electronVersion, arch })

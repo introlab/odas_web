@@ -1,6 +1,15 @@
 const LocalStorage = require('node-localstorage').LocalStorage;
+const os = require('os');
+const path = require('path');
+const fs = require('fs');
 
-const localStorage = new LocalStorage('./config');
+const odasStudioPath = path.join(os.homedir(), 'odas-studio');
+const storagePath = path.join(odasStudioPath, 'config');
+
+if(!fs.existsSync(odasStudioPath))
+    fs.mkdirSync(odasStudioPath);
+
+const localStorage = new LocalStorage(storagePath);
 
 class AppSettings {
     constructor() {

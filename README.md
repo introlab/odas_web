@@ -69,7 +69,7 @@ postfiltered: {
   interface: {
     type = "socket";
     ip = "<IP>";
-    port = 10001;
+    port = 10010;
   }        
 };
 ```

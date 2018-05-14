@@ -111,7 +111,7 @@ exports.AudioRecorder =  class AudioRecorder extends EventEmitter {
             console.log(`Recorder ${this.index} started`)
             console.log(`Recorder ${this.index} was ${this.active} active`)
 
-            let filename = path.join(this.workspacePath, `ODAS_${id}_${new Date().toLocaleString()}_${this.suffix}.wav`)
+            let filename = path.join(this.workspacePath, `ODAS_${id}_${new Date().toISOString()}_${this.suffix}.wav`)
             this.path = filename
 
             try {

@@ -8,7 +8,7 @@ ODAS Studio is a desktop interface built to visually represents data produced by
 
 ## Installation
 ### From sources
-1. Install Node.js
+1. Install Node.js v8
 1. Install npm
 1. Clone the repository
 1. Run _npm install_ in root folder

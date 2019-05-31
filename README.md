@@ -18,11 +18,11 @@ ODAS Studio is a desktop interface built to visually represents data produced by
 1. Extract to the desired location.
 
 ## Usage
-* Run _npm start_ in root folder to laumch the app from sources.
+* Run _npm start_ in root folder to launch the app from sources.
 * Run the executable in the extracted release folder to launch the prebuilt app.
 
 ### Configure ODAS
-The ODAS library must be built to use ODAS Studio. ODAS Studio can be run either with a local or remote ODAS core. For local execution, it is suggested to use 127.0.0.1 as the computer IP. The _Local System Monitor_ in ODAS Studio displays the computer IP for easy configuration of a remote system.
+The ODAS library must be built to use ODAS Studio. You must use the master branch. ODAS Studio can be run either with a local or remote ODAS core. For local execution, it is suggested to use 127.0.0.1 as the computer IP. The _Local System Monitor_ in ODAS Studio displays the computer IP for easy configuration of a remote system.
 
 ODAS Studio uses TCP sockets to receive data from ODAS, thus, it is important to specify the following sinks in the ODAS configuration file:
 * **SSL**

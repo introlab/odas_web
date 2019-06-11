@@ -81,8 +81,8 @@ app.on('activate', function () {
 
 const sockets = require('./servers.js')
 const record = require('./record.js')
-const share = require('./share.js')
-const configure = require('./configure.js')
+require('./share.js')
+require('./configure.js')
 odasStudio.odas = require('./odas.js')
 
 sockets.startTrackingServer(odasStudio)

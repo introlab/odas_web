@@ -111,7 +111,22 @@ exports.AudioRecorder =  class AudioRecorder extends EventEmitter {
             console.log(`Recorder ${this.index} started`)
             console.log(`Recorder ${this.index} was ${this.active} active`)
 
-            let filename = path.join(this.workspacePath, `ODAS_${id}_${new Date().toISOString()}_${this.suffix}.wav`)
+            now = new Date()
+
+            dateString = ""
+            dateString += now.getFullYear() + "-"
+            dateString += (now.getMonth()+1) + "-"
+            dateString += now.getDate()
+
+            timeString = ""
+            timeString += now.getHours() + "-"
+            timeString += now.getMinutes() + "-"
+            timeString += now.getSeconds() + "-"
+            timeString += now.getMilliseconds()
+
+            datetimeString = dateString + "_" + timeString
+
+            let filename = path.join(this.workspacePath, `ODAS_${id}_${datetimeString}_${this.suffix}.wav`)
             this.path = filename
 
             try {

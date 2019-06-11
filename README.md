@@ -7,24 +7,20 @@ A desktop user interface for the [ODAS](https://github.com/introlab/odas) librar
 ODAS Studio is a desktop interface built to visually represents data produced by the ODAS algorithm and manage recordings of separated audio sources. ODAS Studio represents audio energy and tracked audio sources on an unit sphere and is a powerful tool when tuning ODAS settings. ODAS Studio also records separated audio as distinct wav files. ODAS Studio is built on the Electron framework and can be run natively on PC, Mac and Linux.
 
 ## Installation
-### From sources
-1. Install Node.js v8
-1. Install npm
+1. Install Node.js v12
 1. Clone the repository
-1. Run _npm install_ in root folder
+1. Run _npm install_ in the cloned repository base folder (it contains _main.js_)
 
-### From prebuilt package
-1. Download appropriate [release](https://github.com/introlab/odas_web/releases) for your OS.
-1. Extract to the desired location.
+Please note that even if ODAS Studio can be installed on a Raspberry Pi, it will not perform properly due to CPU limitations. Please see the ODAS configuration section for instructions on how to sink data from a Pi running ODAS to another computer trough sockets.
 
 ## Usage
-* Run _npm start_ in root folder to launch the app from sources.
-* Run the executable in the extracted release folder to launch the prebuilt app.
+### Start ODAS Studio
+* Run _npm start_ in the base folder
 
 ### Configure ODAS
-The ODAS library must be built to use ODAS Studio. You must use the master branch. ODAS Studio can be run either with a local or remote ODAS core. For local execution, it is suggested to use 127.0.0.1 as the computer IP. The _Local System Monitor_ in ODAS Studio displays the computer IP for easy configuration of a remote system.
+The ODAS library must be built to use ODAS Studio. You must use the master branch. ODAS Studio can be run either with a local or remote ODAS core. For local execution, it is suggested to use 127.0.0.1 as the computer IP. For remote execution, use the computer IP as seen by the remote computer. The _Local System Monitor_ in ODAS Studio displays the computer IP for easy configuration of a remote system.
 
-ODAS Studio uses TCP sockets to receive data from ODAS, thus, it is important to specify the following sinks in the ODAS configuration file:
+ODAS Studio uses TCP sockets to receive data from ODAS, thus, it is important to specify the following sinks in the ODAS configuration file. Also make sure that your firewall allow connections on the specified ports if running ODAS on a remote computer.
 * **SSL**
 ```
 potential: {

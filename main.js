@@ -15,13 +15,14 @@ const url = require('url')
 let odasStudio = {}
 
 function createWindow () {
+
   // Create the browser window.
   odasStudio.mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
-    'web-preferences': {
-              'web-security': false,
-              "webgl": true
+    webPreferences: {
+              webgl: true,
+              nodeIntegration : true
     },
     icon: path.join(__dirname, 'resources/images/introlab_icon.png'),
     show: false

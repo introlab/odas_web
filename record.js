@@ -1,5 +1,4 @@
 const electron = require('electron');
-const fork = require('child_process').fork;
 const spawn = require('child_process').spawn;
 const path = require('path')
 const url = require('url')
@@ -34,9 +33,8 @@ function createWindow () {
     else {
         recordingsWindow = new BrowserWindow({
             width: 900, height: 700,
-            'web-preferences': {
-                'web-security': false,
-                "webgl": true
+            webPreferences: {
+                nodeIntegration : true
             },
             show:false
         });

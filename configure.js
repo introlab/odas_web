@@ -19,7 +19,14 @@ function openConfigureWindow () {
         return;
     }
 
-    configureWindow = new BrowserWindow({width: 800, height: 600, show: false});
+    configureWindow = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+            nodeIntegration : true
+        },
+        show: false
+    });
 
     configureWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'views','configure.html'),

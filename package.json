@@ -1,6 +1,6 @@
 {
-  "name": "ODAS_Desktop",
-  "version": "0.2.0",
+  "name": "odas_studio",
+  "version": "0.3.0",
   "description": "A desktop GUI for the ODAS library",
   "main": "main.js",
   "scripts": {
@@ -10,19 +10,19 @@
   "author": "Cedric Godin",
   "license": "MIT",
   "devDependencies": {
-    "electron": "~1.7.9",
-    "electron-rebuild": "^1.7.3",
-    "electron-packager": "^10.1.2"
+    "electron": "^5.0.3",
+    "electron-packager": "^13.1.1",
+    "electron-rebuild": "^1.8.5"
   },
   "dependencies": {
-    "@google-cloud/speech": "^1.0.1",
-    "grpc": "^1.9.1",
+    "@google-cloud/speech": "^3.2.0",
+    "grpc": "^1.21.1",
     "ip": "^1.1.5",
-    "mathjs": "^3.20.1",
-    "node-localstorage": "^1.3.0",
-    "systeminformation": "^3.17.3",
-    "wav": "^1.0.1",
-    "wav-file-info": "^0.0.8"
+    "mathjs": "^6.0.1",
+    "node-localstorage": "^1.3.1",
+    "systeminformation": "^4.9.0",
+    "wav": "^1.0.2",
+    "wav-file-info": "0.0.8"
   },
   "repository": {
     "type": "git",

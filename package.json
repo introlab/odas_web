@@ -5,13 +5,12 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "postinstall": "./node_modules/.bin/electron-rebuild"
+    "preinstall": "npm config set runtime electron && npm config set target 5.0.3"
   },
   "author": "Cedric Godin",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^5.0.3",
-    "electron-rebuild": "^1.8.5"
+    "electron": "5.0.3"
   },
   "dependencies": {
     "@google-cloud/speech": "^3.2.0",

@@ -10,7 +10,7 @@
   "author": "Cedric Godin",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^5.0.3",
+    "electron": "^9.4.0",
     "electron-rebuild": "^1.8.5"
   },
   "dependencies": {
